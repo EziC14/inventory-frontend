@@ -24,7 +24,7 @@
 
         <div class="col-xs-12 col-sm-6">
           <div class="text-caption text-grey">Precio Unitario</div>
-          <div class="text-subtitle1">${{ product.price }}</div>
+          <div class="text-subtitle1">S/. {{ product.price }}</div>
         </div>
 
         <div class="col-xs-12 col-sm-6">
@@ -59,7 +59,7 @@
         </q-item-section>
         <q-item-section class="text-black">
           <div>Nombre: <b>{{ item.name }}</b></div>
-          <div>Productos necesarios: <b>{{ item.quantity }}</b></div>
+          <div>Productos necesarios: <b>{{ item.quantity || 1 }}</b></div>
         </q-item-section>
       </q-item>
     </div>

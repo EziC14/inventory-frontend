@@ -35,6 +35,8 @@
       v-if="
         getProductos?.length > 0 && !isLoadingSection && !isLoadingFilter
       "
+      class="bg-white"
+      style="border-radius: 20px;"
     >
       <q-table
         :rows="getProductos"
@@ -44,13 +46,13 @@
         row-key="id"
         virtual-scroll
         :grid="$q.screen.xs"
-        :pagination="datatable.pagination"
+        v-model:pagination="datatable.pagination"
         :rows-per-page-options="[10]"
         flat
       >
         <template v-slot:header="props" v-if="!$q.screen.xs">
-          <q-tr class="bg-primary text-white text-upercase" :props="props">
-            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+          <q-tr class=" text-black text-upercase" :props="props" style="border-radius: 200px;">
+            <q-th v-for="col in props.cols" :key="col.name" :props="props" >
               {{ col.label }}
             </q-th>
             <q-th auto-width>Acciones</q-th>
@@ -166,6 +168,16 @@
           </div>
         </template>
       </q-table>
+
+      <div class="flex flex-center" style="padding: 10px;">
+        <q-pagination
+          v-model="datatable.pagination.page"
+          :max="Math.ceil(getProductos.length / datatable.pagination.rowsPerPage)"
+          input
+          input-class="text-black"
+          color="black"
+        />
+      </div>
     </div>
 
     <EmptyState
@@ -274,6 +286,10 @@ export default {
           { name: "total_stock", label: "Stock total", align: "left", field: "total_stock" },
         ],
         rows: [],
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+        },
       },
       planning: {
         id: null,
@@ -342,6 +358,10 @@ export default {
     },
     onOpenDrawer() {
       this.drawerFilter = true;
+    },
+
+    onPageChange(page) {
+      this.datatable.pagination.page = page;
     },
 
     getProducts() {
@@ -454,4 +474,14 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.q-table__container {
+    position: relative;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.q-table__bottom {
+    display: none;
+}
+</style>
