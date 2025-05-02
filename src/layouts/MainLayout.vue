@@ -210,9 +210,9 @@
                   v-if="menuItem.children && menuItem.children.length"
                   :icon="menuItem.icon"
                   :label="menuItem.label"
-                  :default-opened="menuItem.defaultOpened"
+                  :default-opened="menuItem.defaultOpened || isMenuItemActive(menuItem)"
                   expand-separator
-                  header-class="menu-item-parent"
+                  :header-class="isMenuItemActive(menuItem) ? 'menu-item-parent active-parent-item' : 'menu-item-parent'"
                 >
                   <q-list class="submenu-container">
                     <q-item
@@ -240,6 +240,7 @@
                   v-ripple
                   class="menu-item"
                   active-class="active-menu-item"
+                  :active="isMenuItemActive(menuItem)"
                 >
                   <q-item-section avatar>
                     <q-icon :name="menuItem.icon" size="sm" />
@@ -321,10 +322,24 @@ export default {
         description: 'Registrar entradas y salidas de productos',
       },
       {
-        label: 'Clientes',
-        path: '/customers',
-        icon: 'people',
-        description: 'Administrar clientes'
+        label: 'Configuración',
+        path: '/settings',
+        icon: 'settings',
+        description: 'Configurar la aplicación',
+        children: [
+          {
+            label: 'Categorías de Productos',
+            path: '/settings/categories',
+            icon: 'category',
+            description: 'Administrar categorías de productos'
+          },
+          {
+            label: 'Razones de Movimiento',
+            path: '/settings/movement-reasons',
+            icon: 'assignment_turned_in',
+            description: 'Configurar razones de movimiento'
+          }
+        ]
       },
       {
         label: 'Reportes',
@@ -347,6 +362,24 @@ export default {
         ]
       }
     ]
+
+    // Función para verificar si un ítem del menú está activo
+    const isMenuItemActive = (menuItem) => {
+      const currentPath = route.path
+
+      // Verifica si la ruta actual coincide exactamente con el path del menú
+      if (currentPath === menuItem.path) {
+        return true
+      }
+
+      // Verifica si la ruta actual comienza con el path del menú + '/'
+      // Esto es para que las rutas anidadas funcionen (ej: '/settings/categories')
+      if (menuItem.path !== '/' && currentPath.startsWith(menuItem.path + '/')) {
+        return true
+      }
+
+      return false
+    }
 
     const getAllSearchableItems = () => {
       let items = [...menuItems]
@@ -504,6 +537,7 @@ export default {
       performSearch,
       clearSearch,
       handleSelection,
+      isMenuItemActive, // Exportando la función para usarla en la plantilla
       $q,
       drawerClick (e) {
         if (miniState.value) {
@@ -589,6 +623,22 @@ export default {
 }
 
 .active-menu-item .q-icon {
+  color: white !important;
+}
+
+/* Estilo para el encabezado del menú padre cuando está activo */
+.active-parent-item {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+}
+
+.active-parent-item .q-item__section--avatar .q-icon {
+  color: white !important;
+}
+
+.active-parent-item .q-item__label {
   color: white !important;
 }
 

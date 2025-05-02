@@ -103,7 +103,7 @@
             />
           </div>
           <div style="display: flex; gap: 7%;">
-            <div class="row q-col-gutter-x-md q-mt-lg">
+            <!-- <div class="row q-col-gutter-x-md q-mt-lg">
               <div class="q-gutter-y-sm col-12">
                 <div style="margin: 0">¿Es Producto final?</div>
                 <q-btn-group outline>
@@ -118,7 +118,7 @@
                   />
                 </q-btn-group>
               </div>
-            </div>
+            </div> -->
 
             <div class="q-gutter-y-sm col-12 q-mt-md">
               <div style="margin: 0">¿Tiene colores?</div>
@@ -257,74 +257,76 @@
 
     <!-- Step 3: Product Type -->
     <div v-if="currentStep === 3" class="full-height" style="display: flex; flex-direction: column;">
-
       <!-- Header -->
-      <div class="header">
+      <div class="header row items-center justify-between">
         <div class="text-h6">Gestión de Colores</div>
+        <q-btn @click="addCard" icon="add_circle" label="Agregar color" color="primary" unelevated class="q-px-md" />
       </div>
 
       <!-- Contenido -->
       <div class="content flex-grow-1">
         <div class="color-management">
-          <div class="row items-center justify-between q-mb-lg">
-            <q-btn @click="addCard" icon="add_circle" label="Agregar color" color="primary" unelevated class="q-px-md" />
-          </div>
           <div class="row q-col-gutter-md">
-            <div v-for="(card, index) in colorCards" :key="index" class="col-12 col-sm-8 col-md-3">
-              <q-card class="color-card " style="box-shadow: none; border-radius: 20px; border: 1px solid #E5E5E5;">
-                <div class="color-preview" :style="{ backgroundColor: card.hex_code }" />
-                <q-card-section>
-                  <div class="row q-col-gutter-y-md">
-                    <div class="col-12">
-                      <SimpleInput
-                        labelBody="Nombre del color"
-                        :text="card.name_color"
-                        :rounded="true"
-                        :isRequired="true"
-                        @change-name="(e) => (card.name_color = e)"
-                        dense
-                      />
-                    </div>
-                    <div class="col-12">
-                      <SimpleInput
-                        labelBody="Stock del producto"
-                        :text="card.stock"
-                        :rounded="true"
-                        :isRequired="true"
-                        @change-name="(e) => (card.stock = e)"
-                        :isNumber="true"
-                        dense
-                      />
-                    </div>
-                  </div>
-                </q-card-section>
-                <q-card-section class="color-picker-section row" style="justify-content: space-around">
-                  <div class="row items-center">
-                    <div class="col">
-                      <div class="text-subtitle2 q-mb-sm">Seleccionar color</div>
-                      <q-color
-                        style="width: 150px;"
-                        v-model="card.hex_code"
-                        @input="updateColorCard(index, 'hex', $event)"
-                        no-header-tabs
-                        no-footer
-                        class="color-picker"
-                        default-view="palette"
-                        flat
-                        bordered
-                      />
-                    </div>
-                  </div>
-                </q-card-section>
-                <q-separator />
-                <q-card-actions align="right" class="q-pa-md">
-                  <q-btn flat icon="delete" label="Eliminar" color="negative" @click="removeCard(index)" class="full-width" />
-                </q-card-actions>
-              </q-card>
+            <div v-for="(card, index) in colorCards" :key="index" class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+
+<q-card class="color-card" style="box-shadow: none; border-radius: 20px; border: 1px solid #E5E5E5; min-width: 400px;">
+  <div class="row q-pa-md">
+    <!-- Selector de color a la izquierda -->
+    <div class="col-4 q-pr-xl">
+      <q-color
+        v-model="card.hex_code"
+        @input="updateColorCard(index, 'hex', $event)"
+        no-header-tabs
+        no-footer
+        class="color-picker"
+        default-view="palette"
+        flat
+        bordered
+        style="min-width: 120px;"
+      />
+    </div>
+
+    <!-- Inputs y botón a la derecha -->
+    <div class="col-8 q-pl-md">
+      <div class="column q-gutter-y-md">
+        <!-- Nombre del color -->
+        <q-input
+          label="Nombre del color"
+          v-model="card.name_color"
+          outlined
+          dense
+          rounded
+          class="full-width"
+        />
+
+        <!-- Stock del producto -->
+        <q-input
+          label="Stock del producto"
+          v-model="card.stock"
+          outlined
+          dense
+          rounded
+          class="full-width"
+          type="number"
+        />
+
+        <!-- Botón Eliminar -->
+        <q-btn
+          color="dark-red"
+          icon="delete"
+          label="Eliminar"
+          class="full-width"
+          style="background-color: #5E0721; color: white; border-radius: 8px; height: 40px;"
+          @click="removeCard(index)"
+        />
+      </div>
+    </div>
+  </div>
+</q-card>
             </div>
           </div>
           <div v-if="!colorCards.length" class="empty-state q-pa-xl text-center">
-            <q-icon name="palette" size="4rem" color="grey-4" />
+            <q-icon name="palette" size="4rem" color="grey-4" style="margin-top: 150px;"/>
             <div class="text-h6 text-grey-7 q-mt-md">Sin colores</div>
             <div class="text-grey-6 q-mt-sm">Agrega colores para este producto</div>
           </div>

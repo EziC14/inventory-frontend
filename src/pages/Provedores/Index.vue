@@ -302,10 +302,11 @@ export default {
       deleting: false,
       deleteDialog: false,
       selectedSupplier: null,
-      visibleColumns: ["name", "contact_name", "company_name", "phone", "email"],
+      visibleColumns: ["ruc" ,"contact_name", "company_name", "phone", "email"],
       columns: [
-        { name: "contact_name", label: "Nombre de Contacto", align: "left", field: "contact_name" },
         { name: "company_name", label: "Compañía", align: "left", field: "company_name" },
+        { name: "ruc", label: "RUC", align: "left", field: "ruc" },
+        { name: "contact_name", label: "Nombre de Contacto", align: "left", field: "contact_name" },
         { name: "phone", label: "Teléfono", align: "left", field: "phone" },
         { name: "email", label: "Email", align: "left", field: "email" },
       ],
@@ -354,7 +355,7 @@ export default {
     async fetchSuppliers() {
       this.loading = true;
       return this.$store
-        .dispatch("general/getSupplier", { root: true })
+        .dispatch("provedores/getSupplier", { root: true })
         .then((response) => {
           this.suppliers = response.data.data;
         })

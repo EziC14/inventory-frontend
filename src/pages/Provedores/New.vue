@@ -88,18 +88,6 @@
                       :labelBody="field.label"
                       :iconPosition="field.iconPosition"
                     />
-                    <!-- Address field spans full width -->
-                    <SimpleInput
-                      :text="supplier.address"
-                      @change-name="(e) => (supplier.address = e)"
-                      class="col-12 q-mb-xs"
-                      icon="location_on"
-                      :isRequired="false"
-                      labelBody="Dirección"
-                      iconPosition="prepend"
-                      type="textarea"
-                      :rows="3"
-                    />
                   </div>
                 </div>
               </div>
@@ -238,7 +226,11 @@
                           <div class="q-mb-md">{{ supplier.company_name || 'No especificado' }}</div>
 
                           <div class="text-subtitle2 text-grey-8">Nombre de Contacto</div>
-                          <div>{{ supplier.contact_name || 'No especificado' }}</div>
+                          <div class="q-mb-md">{{ supplier.contact_name || 'No especificado' }}</div>
+
+                          <div class="text-subtitle2 text-grey-8">RUC</div>
+                          <div class="q-mb-md">{{ supplier.ruc || 'No especificado' }}</div>
+
                         </div>
 
                         <div class="col-12 col-md-6">
@@ -249,7 +241,7 @@
                           <div class="q-mb-md">{{ supplier.email || 'No especificado' }}</div>
 
                           <div class="text-subtitle2 text-grey-8">Dirección</div>
-                          <div>{{ supplier.address || 'No especificado' }}</div>
+                          <div class="q-mb-md">{{ supplier.address || 'No especificado' }}</div>
                         </div>
                       </div>
                     </q-card-section>
@@ -357,10 +349,13 @@ export default {
         productsSecond: [],
       },
       basicFields: [
-        { key: 'contact_name', label: 'Nombre de Contacto', icon: 'person', required: false, iconPosition: 'prepend' },
         { key: 'company_name', label: 'Nombre de la Empresa', icon: 'apartment', required: false, iconPosition: 'prepend' },
+        { key: 'ruc', label: 'RUC', icon: 'business', required: false, iconPosition: 'prepend' },
+        { key: 'contact_name', label: 'Nombre de Contacto', icon: 'person', required: false, iconPosition: 'prepend' },
         { key: 'phone', label: 'Teléfono', icon: 'phone', required: false, iconPosition: 'prepend' },
-        { key: 'email', label: 'Correo Electrónico', icon: 'email', required: false, iconPosition: 'prepend' }
+        { key: 'email', label: 'Correo Electrónico', icon: 'email', required: false, iconPosition: 'prepend' },
+        { key: 'address', label: 'Dirección', icon: 'place', required: false, iconPosition: 'prepend' },
+
       ],
       productsColumns: [
         { name: 'name', align: 'left', label: 'Nombre del Producto', field: 'name' },

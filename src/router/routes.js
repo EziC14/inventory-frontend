@@ -6,6 +6,8 @@ const routes = [
       { path: "product" , meta: { auth: true },component: () => import("pages/ProductPage.vue") },
       { path: "provider", meta: { auth: true },component: () => import("pages/Provedores/Index.vue") },
       { path: "movements", meta: { auth: true },component: () => import("pages/Movimientos/Index.vue") },
+      { path: "settings/categories" , meta: { auth: true },component: () => import("pages/Administration/Category.vue") },
+      { path: "settings/movement-reasons" , meta: { auth: true },component: () => import("pages/Administration/Razones.vue") },
     ],
   },
   {

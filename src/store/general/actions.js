@@ -62,6 +62,20 @@ export function getCategory({ dispatch, commit }, payload) {
     return api.get(`/product/category`);
 }
 
+export function getCategoryId({ dispatch, commit }, id) {
+  return api.get(`/product/category/${id}`);
+}
+export function updatedCategoryId({ dispatch, commit }, payload) {
+  return api.put(`/product/category/${payload.id}`, payload);
+}
+
+export function deleteCategoryId({ dispatch, commit }, id) {
+  return api.delete(`/product/category/${id}`);
+}
+export function setCategory({ dispatch, commit }, payload) {
+  return api.post(`/product/category`, payload);
+}
+
 export function getPrimaryProduct({ dispatch, commit }, payload) {
   return api.get(`/product/primary-product`);
 }
@@ -78,10 +92,6 @@ export function setFinalProduct({ dispatch, commit }, payload) {
   return api.post(`/product/final-product`, payload);
 }
 
-export function getSupplier({ dispatch, commit }, payload) {
-  return api.get(`/supplier/`);
-}
-
-export function setSupplier({ dispatch, commit }, payload) {
-  return api.post(`/supplier/`, payload);
+export function getProductColors({ dispatch, commit }, id) {
+  return api.get(`/product/product-color/${id}`);
 }

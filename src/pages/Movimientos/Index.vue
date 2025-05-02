@@ -75,7 +75,7 @@
                 <q-btn
                   @click="viewMovementDetails(props.row)"
                   icon="visibility"
-                  class="bg-info text-white"
+                  class="bg-primary text-white"
                   size="sm"
                   round
                   flat
@@ -249,11 +249,12 @@
       @closeDrawer="onCloseDrawer"
       title="Filtrar movimientos"
     >
-      <q-input
+
+    <q-input
         v-model="filters.search"
         placeholder="Buscar por nota o referencia..."
         outlined
-        dense
+        rounded
         clearable
         class="q-mb-md"
         bg-color="white"
@@ -262,13 +263,34 @@
           <q-icon name="search" color="primary" />
         </template>
       </q-input>
+    <q-input
+        v-model="filters.dateFrom"
+        type="date"
+        label="Desde fecha"
+        outlined
+        rounded
+        clearable
+        class="q-mb-md"
+        bg-color="white"
+      />
+
+      <q-input
+        v-model="filters.dateTo"
+        type="date"
+        label="Hasta fecha"
+        outlined
+        rounded
+        clearable
+        class="q-mb-md"
+        bg-color="white"
+      />
 
       <q-select
         v-model="filters.direction"
         :options="directionOptions"
-        label="Dirección del movimiento"
+        label="Tipo de Movimiento"
         outlined
-        dense
+        rounded
         emit-value
         map-options
         clearable
@@ -281,7 +303,7 @@
         :options="reasonTypeOptions"
         label="Tipo de movimiento"
         outlined
-        dense
+        rounded
         emit-value
         map-options
         clearable
@@ -289,40 +311,6 @@
         bg-color="white"
       />
 
-      <q-select
-        v-model="filters.supplier"
-        :options="supplierOptions"
-        label="Proveedor"
-        outlined
-        dense
-        emit-value
-        map-options
-        clearable
-        class="q-mb-md"
-        bg-color="white"
-      />
-
-      <q-input
-        v-model="filters.dateFrom"
-        type="date"
-        label="Desde fecha"
-        outlined
-        dense
-        clearable
-        class="q-mb-md"
-        bg-color="white"
-      />
-
-      <q-input
-        v-model="filters.dateTo"
-        type="date"
-        label="Hasta fecha"
-        outlined
-        dense
-        clearable
-        class="q-mb-md"
-        bg-color="white"
-      />
     </DrawerFilter>
 
     <!-- Diálogo de confirmación para eliminar -->
@@ -353,137 +341,171 @@
 
     <!-- Modal de detalles de movimiento -->
     <q-dialog v-model="showDetailsModal" persistent>
-      <q-card style="width: 700px; max-width: 90vw">
-        <q-card-section class="row items-center">
-          <div class="text-h6">Detalles del Movimiento</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
+  <q-card class="modal-card" style="width: 800px; max-width: 95vw; border-radius: 12px;">
+    <!-- Encabezado -->
+    <q-card-section class="row items-center q-pa-md bg-primary text-white">
+      <div class="text-h6">Detalles del Movimiento</div>
+      <q-space />
+      <q-btn icon="close" flat round dense v-close-popup color="white" aria-label="Cerrar diálogo" />
+    </q-card-section>
 
-        <q-card-section v-if="selectedMovement">
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
-              <q-list>
-                <q-item>
-                  <q-item-section avatar>
-                    <q-icon name="swap_horiz" :color="selectedMovement.direction === 'input' ? 'positive' : 'negative'" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label caption>Dirección</q-item-label>
-                    <q-item-label>{{ selectedMovement.direction === 'input' ? 'Entrada' : 'Salida' }}</q-item-label>
-                  </q-item-section>
-                </q-item>
+    <!-- Contenido -->
+    <q-card-section v-if="selectedMovement" class="q-pa-md">
+      <div class="row q-col-gutter-lg">
+        <!-- Columna izquierda -->
+        <div class="col-12 col-md-6">
+          <q-list dense>
+            <q-item class="q-mb-sm">
+              <q-item-section avatar>
+                <q-icon
+                  name="swap_horiz"
+                  :color="selectedMovement.direction === 'input' ? 'positive' : 'negative'"
+                  size="sm"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>Tipo de Movimiento</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  selectedMovement.direction === 'input' ? 'Entrada' : 'Salida'
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
 
-                <q-item>
-                  <q-item-section avatar>
-                    <q-icon name="category" color="primary" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label caption>Tipo de movimiento</q-item-label>
-                    <q-item-label>{{ selectedMovement.reason_type ? selectedMovement.reason_type.name : 'Sin tipo' }}</q-item-label>
-                  </q-item-section>
-                </q-item>
+            <q-item class="q-mb-sm">
+              <q-item-section avatar>
+                <q-icon name="category" color="primary" size="sm" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>Tipo de movimiento</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  selectedMovement.reason_type ? selectedMovement.reason_type.name : 'Sin tipo'
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
 
-                <q-item>
-                  <q-item-section avatar>
-                    <q-icon name="event" color="primary" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label caption>Fecha</q-item-label>
-                    <q-item-label>{{ formatDate(selectedMovement.date) }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
+            <q-item class="q-mb-sm">
+              <q-item-section avatar>
+                <q-icon name="event" color="primary" size="sm" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>Fecha</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  formatDate(selectedMovement.date)
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
 
-            <div class="col-12 col-md-6">
-              <q-list>
-                <q-item v-if="selectedMovement.supplier">
-                  <q-item-section avatar>
-                    <q-icon name="store" color="primary" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label caption>Proveedor</q-item-label>
-                    <q-item-label>{{ selectedMovement.supplier.name }}</q-item-label>
-                  </q-item-section>
-                </q-item>
+        <!-- Columna derecha -->
+        <div class="col-12 col-md-6">
+          <q-list dense>
+            <q-item v-if="selectedMovement.supplier" class="q-mb-sm">
+              <q-item-section avatar>
+                <q-icon name="store" color="primary" size="sm" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>Proveedor</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  selectedMovement.supplier.name
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
 
-                <q-item v-if="selectedMovement.created_by">
-                  <q-item-section avatar>
-                    <q-icon name="person" color="primary" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label caption>Creado por</q-item-label>
-                    <q-item-label>{{ selectedMovement.created_by }}</q-item-label>
-                  </q-item-section>
-                </q-item>
+            <q-item v-if="selectedMovement.created_by" class="q-mb-sm">
+              <q-item-section avatar>
+                <q-icon name="person" color="primary" size="sm" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>Creado por</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  selectedMovement.created_by
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
 
-                <q-item v-if="selectedMovement.notes">
-                  <q-item-section avatar>
-                    <q-icon name="note" color="primary" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label caption>Notas</q-item-label>
-                    <q-item-label>{{ selectedMovement.notes }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
-          </div>
+            <q-item v-if="selectedMovement.notes" class="q-mb-sm">
+              <q-item-section avatar>
+                <q-icon name="note" color="primary" size="sm" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label caption>Notas</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  selectedMovement.notes
+                }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </div>
 
-          <q-separator class="q-my-md" />
+      <!-- Separador -->
+      <q-separator class="q-my-lg" />
 
-          <div class="text-h6 q-mb-md">Detalle de productos</div>
-          <q-table
-            :rows="selectedMovement.details || []"
-            :columns="detailColumns"
-            dense
-            flat
-            hide-pagination
-            hide-bottom
-          >
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                  {{ col.label }}
-                </q-th>
-              </q-tr>
-            </template>
+      <!-- Tabla de detalles -->
+      <div class="text-h6 q-mb-md">Detalle de productos</div>
+      <q-table
+        :rows="selectedMovement.details || []"
+        :columns="detailColumns"
+        dense
+        flat
+        row-key="id"
+        class="custom-table"
+        :pagination="{ rowsPerPage: 0 }"
+        wrap-cells
+      >
+        <template v-slot:header="props">
+          <q-tr :props="props" class="bg-grey-2">
+            <q-th v-for="col in props.cols" :key="col.name" :props="props" class="text-weight-bold">
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
 
-            <template v-slot:body="props">
-              <q-tr :props="props">
-                <q-td key="product" :props="props">
-                  <span v-if="props.row.primary_product">{{ props.row.primary_product.name }}</span>
-                  <span v-else-if="props.row.final_product">{{ props.row.final_product.name }}</span>
-                  <span v-else>Sin producto</span>
-                </q-td>
-                <q-td key="color" :props="props">
-                  {{ props.row.product_color ? props.row.product_color.name : 'N/A' }}
-                </q-td>
-                <q-td key="quantity" :props="props">
-                  {{ props.row.quantity }}
-                </q-td>
-                <q-td key="unit_price" :props="props">
-                  {{ formatCurrency(props.row.unit_price) }}
-                </q-td>
-                <q-td key="total_price" :props="props">
-                  {{ formatCurrency(props.row.total_price) }}
-                </q-td>
-              </q-tr>
-            </template>
-          </q-table>
+        <template v-slot:body="props">
+          <q-tr :props="props" class="hover-row">
+            <q-td key="product" :props="props">
+              {{ props.row.primary_product ? props.row.primary_product.name : 'Sin producto' }}
+            </q-td>
+            <q-td key="color" :props="props">
+              {{ props.row.product_color ? props.row.product_color.name : 'N/A' }}
+            </q-td>
+            <q-td key="quantity" :props="props" class="text-right">
+              {{ props.row.quantity }}
+            </q-td>
+            <q-td key="unit_price" :props="props" class="text-right">
+              {{ formatCurrency(props.row.unit_price) }}
+            </q-td>
+            <q-td key="total_price" :props="props" class="text-right text-weight-bold">
+              {{ formatCurrency(props.row.total_price) }}
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
 
-          <div class="row justify-end q-mt-md">
-            <div class="text-subtitle1 q-mr-md text-weight-bold">Total:</div>
-            <div class="text-subtitle1 text-weight-bold">{{ calculateTotalMovement(selectedMovement) }}</div>
-          </div>
-        </q-card-section>
+      <!-- Total -->
+      <div class="row justify-end q-mt-lg">
+        <div class="text-subtitle1 q-mr-md text-weight-bold">Total:</div>
+        <div class="text-subtitle1 text-weight-bold text-primary">{{
+          calculateTotalMovement(selectedMovement)
+        }}</div>
+      </div>
+    </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn flat label="Cerrar" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <!-- Acciones -->
+    <q-card-actions align="right" class="q-pa-md bg-grey-1">
+      <q-btn
+        flat
+        label="Cerrar"
+        color="primary"
+        v-close-popup
+        class="q-px-lg"
+        unelevated
+        aria-label="Cerrar diálogo"
+      />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
   </q-page>
 </template>
 
@@ -512,14 +534,34 @@ export default {
       deleting: false,
       deleteDialog: false,
       selectedMovement: null,
-      visibleColumns: ["direction", "date", "reason_type", "supplier", "notes"],
+      visibleColumns: ["direction", "date", "quantity", "supplier", "total_price", "reason_type"],
       columns: [
         {
           name: "direction",
-          label: "Dirección",
-          align: "center",
+          label: "Tipo de Movimiento",
+          align: "left",
           field: "direction",
           sortable: true
+        },
+        {
+          name: "reason_type",
+          label: "Razón de Movimiento",
+          align: "left",
+          field: "reason_type",
+          sortable: true
+        },
+        {
+          name: "quantity",
+          label: "Cantidad de Registros",
+          align: "left",
+          field: row => row.details ? row.details.length : 0,
+          sortable: true
+        },
+        {
+          name: "total_price",
+          label: "Precio Total",
+          align: "left",
+          field: "total_price"
         },
         {
           name: "date",
@@ -529,37 +571,13 @@ export default {
           sortable: true,
           sort: (a, b) => new Date(a) - new Date(b)
         },
-        {
-          name: "reason_type",
-          label: "Tipo de Movimiento",
-          align: "left",
-          field: row => row.reason_type ? row.reason_type.name : '',
-          sortable: true
-        },
-        {
-          name: "supplier",
-          label: "Proveedor",
-          align: "left",
-          field: row => row.supplier ? row.supplier.name : '',
-          sortable: true
-        },
-        {
-          name: "notes",
-          label: "Notas",
-          align: "left",
-          field: "notes"
-        },
       ],
       detailColumns: [
         {
           name: "product",
           label: "Producto",
           align: "left",
-          field: row => {
-            if (row.primary_product) return row.primary_product.name;
-            if (row.final_product) return row.final_product.name;
-            return 'Sin producto';
-          }
+          field: row => row.primary_product ? row.primary_product.name : 'Sin producto'
         },
         {
           name: "color",
@@ -628,7 +646,7 @@ export default {
         });
       }
 
-      // Filtro por dirección
+      // Filtro por Tipo de Movimiento
       if (this.filters.direction) {
         result = result.filter(movement => movement.direction === this.filters.direction);
       }
@@ -714,9 +732,6 @@ export default {
         })
         .catch((error) => {
           console.error('Error al cargar tipos de razón:', error);
-        })
-        .finally(() => {
-          this.loading = false;
         });
     },
 
@@ -724,21 +739,26 @@ export default {
       return this.$store
         .dispatch("provedores/getSupplier", { root: true })
         .then((response) => {
-          this.suppliers = response.data.data;
+          if (response.data.status === 'OK') {
+            this.supplierOptions = response.data.data.map(supplier => ({
+              label: supplier.name,
+              value: supplier.id
+            }));
+          }
         })
         .catch((error) => {
           this.alertError(error?.response?.data?.msg || 'Error al cargar proveedores');
-        })
-        .finally(() => {
-          this.loading = false;
         });
     },
 
     formatDate(dateString) {
-      return date.formatDate(dateString, 'DD/MM/YYYY');
+      if (!dateString) return '';
+      const dateObj = new Date(dateString);
+      return dateObj.toLocaleDateString('es-PE', { timeZone: 'UTC' });
     },
 
     formatCurrency(value) {
+      if (value === undefined || value === null) return '';
       return new Intl.NumberFormat('es-CO', {
         style: 'currency',
         currency: 'COP',
@@ -814,6 +834,24 @@ export default {
 </script>
 
 <style>
+.modal-card {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.custom-table {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.custom-table .hover-row:hover {
+  background-color: #f5f5f5;
+}
+
+.text-weight-medium {
+  font-weight: 500;
+}
+
 .movement-card {
   border-radius: 12px;
   transition: transform 0.2s, box-shadow 0.2s;

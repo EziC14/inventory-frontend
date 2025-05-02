@@ -34,3 +34,7 @@ export function updatedReasonTypeId({ dispatch, commit }, payload) {
 export function setReasonType({ dispatch, commit }, payload) {
   return api.post(`/movement/reason-types/`, payload);
 }
+
+export function deleteReasonType({ dispatch, commit }, id) {
+  return api.delete(`/movement/reason-types/${id}`);
+}

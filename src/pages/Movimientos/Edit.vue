@@ -4,7 +4,7 @@
       <!-- Header Section -->
       <div class="row items-center justify-between q-mb-lg">
         <div class="text-h5 text-weight-bold text-primary">
-          <Title name="Nuevo Movimiento de Inventario" />
+          <Title name="Editar Movimiento de Inventario" />
         </div>
         <q-circular-progress
           show-value
@@ -46,10 +46,13 @@
                 </q-item-section>
 
                 <q-item-section>
-                  <q-item-label class="text-subtitle1" :class="{
-                    'text-weight-bold': currentStep === index + 1,
-                    'text-grey': currentStep < index + 1
-                  }">
+                  <q-item-label
+                    class="text-subtitle1"
+                    :class="{
+                      'text-weight-bold': currentStep === index + 1,
+                      'text-grey': currentStep < index + 1
+                    }"
+                  >
                     {{ step }}
                   </q-item-label>
                 </q-item-section>
@@ -64,107 +67,87 @@
 
         <!-- Right content -->
         <div class="col-12 col-md-9 q-pl-md">
-          <q-card class="custom-card" style="border-radius: 20px; box-shadow: none; padding: 40px; height: calc(100vh - 200px); min-height: 600px; display: flex; flex-direction: column;">
-
+          <q-card
+            class="custom-card"
+            style="border-radius: 20px; box-shadow: none; padding: 40px; height: calc(100vh - 200px); min-height: 600px; display: flex; flex-direction: column;"
+          >
             <!-- Step 1: Basic Information -->
             <div v-if="currentStep === 1" class="full-height" style="display: flex; flex-direction: column;">
               <!-- Header -->
               <div class="header">
-                <div class="text-h6">Información Básica del Movimiento</div>
+                <div class="text-h6">Información Básica</div>
               </div>
 
-              <!-- Contenido -->
+              <!-- Content -->
               <div class="content flex-grow-1">
                 <div class="q-mt-lg">
-                  <div class="row q-col-gutter-x-md q-col-gutter-y-md">
-                    <div class="col-12 col-md-6">
+                  <div class="row q-col-gutter-x-md">
+                    <SelectInput
+                      :text="movement.direction"
+                      @change-name="(e) => (movement.direction = e)"
+                      class="col-12 col-md-6 q-mb-xs"
+                      :options="directionOptions"
+                      icon="swap_horiz"
+                      :isRequired="true"
+                      labelBody="Dirección de Movimiento"
+                      iconPosition="prepend"
+                    />
+
+                    <SelectInput
+                      :text="movement.reason_type"
+                      @change-name="(e) => (movement.reason_type = e)"
+                      class="col-12 col-md-6 q-mb-xs"
+                      :options="reasonTypes"
+                      icon="category"
+                      :isRequired="true"
+                      labelBody="Razón de Movimiento"
+                      iconPosition="prepend"
+                    />
+
+                    <SelectInput
+                      :text="movement.supplier"
+                      @change-name="(e) => (movement.supplier = e)"
+                      class="col-12 col-md-6 q-mb-xs"
+                      :options="suppliers"
+                      icon="business"
+                      :isRequired="false"
+                      labelBody="Proveedor"
+                      iconPosition="prepend"
+                    />
+
+                    <div class="col-12 col-md-6 q-mb-xs">
                       <q-input
-                        v-model="movement.date"
-                        label="Fecha"
+                        v-model="movement.client_name"
                         outlined
-                        dense
-                        type="date"
-                        class="q-mb-md"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="event" />
-                        </template>
-                      </q-input>
-
-                      <q-select
-                        v-model="movement.direction"
-                        :options="directionOptions"
-                        label="Dirección"
-                        outlined
-                        dense
-                        map-options
-                        emit-value
-                        class="q-mb-md"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="swap_horiz" />
-                        </template>
-                      </q-select>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                      <q-select
-                        v-model="movement.reason_type"
-                        :options="reasonTypes"
-                        label="Tipo de Razón"
-                        outlined
-                        dense
-                        option-value="id"
-                        option-label="name"
-                        map-options
-                        emit-value
-                        class="q-mb-md"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="category" />
-                        </template>
-                      </q-select>
-
-                      <q-select
-                        v-model="movement.supplier"
-                        :options="suppliers"
-                        label="Proveedor"
-                        outlined
-                        dense
-                        option-value="id"
-                        option-label="name"
-                        map-options
-                        emit-value
-                        class="q-mb-md"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="business" />
-                        </template>
-                      </q-select>
+                        label="Nombre del Cliente"
+                        :rules="[val => movement.direction && movement.direction.value === 'output' ? !!val || 'Nombre del cliente requerido para salidas' : true]"
+                      />
                     </div>
 
                     <div class="col-12">
                       <q-input
                         v-model="movement.notes"
-                        label="Notas"
                         outlined
                         type="textarea"
-                        :rows="3"
-                        class="q-mb-md"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="description" />
-                        </template>
-                      </q-input>
+                        label="Notas"
+                        rows="4"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Navegación -->
+              <!-- Navigation -->
               <q-stepper-navigation class="navigation row items-center justify-between q-gutter-x-md q-mt-auto">
                 <div>
-                  <q-btn @click="goTo('/inventory')" color="primary" class="q-px-xl q-py-sm" rounded outline label="Cancelar" />
+                  <q-btn
+                    @click="goTo('/movements')"
+                    color="primary"
+                    class="q-px-xl q-py-sm"
+                    rounded
+                    outline
+                    label="Cancelar"
+                  />
                 </div>
                 <div>
                   <q-btn
@@ -186,169 +169,136 @@
                 <div class="text-h6">Detalles del Movimiento</div>
               </div>
 
-              <!-- Contenido -->
+              <!-- Content -->
               <div class="content flex-grow-1">
-                <div class="q-mb-md row justify-between items-center">
-                  <div class="text-subtitle1 text-weight-medium">Productos</div>
+                <div class="row q-mb-md items-center justify-between">
                   <q-btn
+                    @click="addMovementDetail"
                     color="primary"
                     icon="add"
-                    label="Agregar Producto"
-                    flat
-                    round
-                    @click="addDetail"
+                    label="Agregar Detalle"
+                    unelevated
+                    v-if="movementDetails.length === 0"
                   />
                 </div>
 
-                <div v-for="(detail, index) in movement.details" :key="index" class="q-mb-lg">
-                  <q-card flat bordered class="q-pa-md" style="border-radius: 12px;">
-                    <div class="row justify-between items-center q-mb-md">
-                      <div class="text-subtitle2">Producto {{ index + 1 }}</div>
-                      <q-btn
-                        v-if="movement.details.length > 1"
-                        icon="delete"
-                        color="negative"
-                        flat
-                        round
-                        dense
-                        @click="removeDetail(index)"
-                      />
-                    </div>
+                <div v-if="!movementDetails.length" class="empty-state q-pa-xl text-center">
+                  <q-icon name="inventory" size="4rem" color="grey-4" />
+                  <div class="text-h6 text-grey-7 q-mt-md">Sin Detalles</div>
+                  <div class="text-grey-6 q-mt-sm">Agrega detalles a este movimiento de inventario</div>
+                </div>
 
-                    <div class="row q-col-gutter-md">
-                      <div class="col-12 col-md-6">
-                        <q-select
-                          v-model="detail.product_type"
-                          :options="productTypeOptions"
-                          label="Tipo de Producto"
-                          outlined
-                          dense
-                          class="q-mb-md"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="inventory_2" />
-                          </template>
-                        </q-select>
-
-                        <!-- Producto Primario -->
-                        <q-select
-                          v-if="detail.product_type === 'primary'"
-                          v-model="detail.primary_product"
-                          :options="primaryProducts"
-                          label="Producto Primario"
-                          outlined
-                          dense
-                          option-value="id"
-                          option-label="name"
-                          map-options
-                          emit-value
-                          class="q-mb-md"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="category" />
-                          </template>
-                        </q-select>
-
-                        <!-- Producto Final -->
-                        <q-select
-                          v-if="detail.product_type === 'final'"
-                          v-model="detail.final_product"
-                          :options="finalProducts"
-                          label="Producto Final"
-                          outlined
-                          dense
-                          option-value="id"
-                          option-label="name"
-                          map-options
-                          emit-value
-                          class="q-mb-md"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="inventory" />
-                          </template>
-                        </q-select>
-
-                        <!-- Color del Producto (solo para productos finales) -->
-                        <q-select
-                          v-if="detail.product_type === 'final'"
-                          v-model="detail.product_color"
-                          :options="productColors"
-                          label="Color del Producto"
-                          outlined
-                          dense
-                          option-value="id"
-                          option-label="name"
-                          map-options
-                          emit-value
-                          class="q-mb-md"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="palette" />
-                          </template>
-                        </q-select>
-                      </div>
-
-                      <div class="col-12 col-md-6">
-                        <q-input
-                          v-model="detail.quantity"
-                          type="number"
-                          label="Cantidad"
-                          outlined
-                          dense
-                          class="q-mb-md"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="shopping_cart" />
-                          </template>
-                        </q-input>
-
-                        <q-input
-                          v-model="detail.unit_price"
-                          type="number"
-                          label="Precio Unitario"
-                          outlined
-                          dense
-                          class="q-mb-md"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="attach_money" />
-                          </template>
-                        </q-input>
-
-                        <div class="text-subtitle2 q-mt-md">
-                          Total: {{ calculateTotal(detail) }}
+                <div v-else class="q-pa-md">
+                  <div v-for="(detail, index) in movementDetails" :key="index" class="q-mb-lg">
+                    <q-card class="movement-detail-card" bordered>
+                      <q-card-section class="bg-primary text-white">
+                        <div class="row items-center justify-between">
+                          <div class="text-subtitle1">Detalle #{{ index + 1 }}</div>
+                          <q-btn flat round dense icon="delete" color="white" @click="removeMovementDetail(index)" />
                         </div>
-                      </div>
-                    </div>
-                  </q-card>
-                </div>
+                      </q-card-section>
 
-                <div v-if="movement.details.length === 0" class="text-center q-pa-xl">
-                  <q-icon name="inventory_2" size="64px" color="grey-5" />
-                  <div class="text-h6 text-grey-6 q-mt-md">No hay productos agregados</div>
-                  <q-btn
-                    color="primary"
-                    icon="add"
-                    label="Agregar Producto"
-                    flat
-                    @click="addDetail"
-                    class="q-mt-md"
-                  />
+                      <q-card-section>
+                        <div class="row q-col-gutter-md">
+                          <!-- Primera fila -->
+                          <div class="col-12 col-md-6">
+                            <q-select
+                              v-model="detail.primary_product"
+                              :options="primaryProducts"
+                              label="Producto Primario"
+                              outlined
+                              emit-value
+                              map-options
+                              @update:model-value="loadProductColors($event, index)"
+                            />
+                          </div>
+
+                          <div class="col-12 col-md-6" v-if="detail.availableColors.length">
+                            <q-select
+                              v-model="detail.product_color"
+                              :options="detail.availableColors"
+                              label="Color del Producto"
+                              outlined
+                              emit-value
+                              map-options
+                            />
+                          </div>
+
+                          <!-- Segunda fila -->
+                          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
+                            <q-input
+                              v-model.number="detail.quantity"
+                              type="number"
+                              label="Cantidad"
+                              outlined
+                              dense
+                              min="1"
+                            />
+                          </div>
+
+                          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
+                            <q-input
+                              v-model.number="detail.unit_price"
+                              type="number"
+                              label="Precio Unitario"
+                              outlined
+                              dense
+                              min="0"
+                              step="0.01"
+                            >
+                              <template v-slot:prepend>
+                                <q-icon name="attach_money" color="primary" />
+                              </template>
+                              <template v-slot:append>
+                                <div class="text-caption">S/.</div>
+                              </template>
+                            </q-input>
+                          </div>
+
+                          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
+                            <div class="price-total-container">
+                              <div class="text-subtitle2">Precio Total</div>
+                              <div class="text-subtitle2 q-mt-none">
+                                <span class="text-primary">S/.</span>
+                                {{ detail.quantity && detail.unit_price ? (detail.quantity * detail.unit_price).toFixed(2) : '0.00' }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+
+                  <div class="q-mt-md">
+                    <q-btn
+                      color="primary"
+                      icon="add"
+                      label="Agregar Producto"
+                      @click="addMovementDetail"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <!-- Navegación -->
+              <!-- Navigation -->
               <q-stepper-navigation class="navigation row items-center justify-between q-gutter-x-md q-mt-auto">
                 <div>
-                  <q-btn @click="currentStep = 1" color="primary" class="q-px-xl q-py-sm" rounded outline label="Atrás" />
+                  <q-btn
+                    @click="currentStep = 1"
+                    color="primary"
+                    class="q-px-xl q-py-sm"
+                    rounded
+                    outline
+                    label="Atrás"
+                  />
                 </div>
                 <div>
                   <q-btn
-                    :disable="verifyDetailsStep"
+                    :disable="verifyDetails"
                     @click="nextStep"
-                    class="bg-primary text-white q-px-xl q-py-sm"
+                    color="primary"
                     rounded
-                    flat
+                    class="bg-primary text-white q-px-xl q-py-sm"
                     label="Continuar"
                   />
                 </div>
@@ -356,76 +306,77 @@
             </div>
 
             <!-- Step 3: Summary -->
-            <div v-if="currentStep === 3" class="full-height" style="display: flex; flex-direction: column;">
+            <div v-if="currentStep === 3" class="full-height" style="display: flex; flex-direction: column pagrind">
               <!-- Header -->
               <div class="header">
-                <div class="text-h6">Resumen del Movimiento</div>
+                <div class="text-h6">Resumen</div>
               </div>
 
-              <!-- Contenido -->
+              <!-- Content -->
               <div class="content flex-grow-1">
-                <div class="q-pa-md">
-                  <q-card flat bordered class="q-mb-lg" style="border-radius: 16px;">
-                    <q-card-section>
-                      <div class="text-h6 q-mb-md">Información General</div>
-                      <div class="row q-col-gutter-md">
-                        <div class="col-12 col-md-6">
-                          <div class="text-subtitle2 text-grey-8">Fecha</div>
-                          <div class="q-mb-md">{{ formatDate(movement.date) || 'No especificado' }}</div>
-
-                          <div class="text-subtitle2 text-grey-8">Dirección</div>
-                          <div class="q-mb-md">{{ getDirectionDisplay(movement.direction) || 'No especificado' }}</div>
-                        </div>
-
-                        <div class="col-12 col-md-6">
-                          <div class="text-subtitle2 text-grey-8">Tipo de Razón</div>
-                          <div class="q-mb-md">{{ getReasonTypeName(movement.reason_type) || 'No especificado' }}</div>
-
-                          <div class="text-subtitle2 text-grey-8">Proveedor</div>
-                          <div class="q-mb-md">{{ getSupplierName(movement.supplier) || 'No especificado' }}</div>
-                        </div>
-
-                        <div class="col-12">
-                          <div class="text-subtitle2 text-grey-8">Notas</div>
-                          <div>{{ movement.notes || 'No especificado' }}</div>
-                        </div>
+                <q-card class="q-mb-md" flat bordered>
+                  <q-card-section>
+                    <div class="text-h6">Información Básica</div>
+                    <div class="row q-col-gutter-md q-mt-sm">
+                      <div class="col-12 col-md-6">
+                        <div class="text-subtitle2">Dirección de Movimiento:</div>
+                        <div>{{ getDirectionLabel(movement.direction?.value) }}</div>
                       </div>
-                    </q-card-section>
-                  </q-card>
+                      <div class="col-12 col-md-6">
+                        <div class="text-subtitle2">Razón de Movimiento:</div>
+                        <div>{{ getReasonTypeLabel(movement.reason_type?.value) }}</div>
+                      </div>
+                      <div class="col-12 col-md-6" v-if="movement.supplier">
+                        <div class="text-subtitle2">Proveedor:</div>
+                        <div>{{ getSupplierLabel(movement.supplier?.value) }}</div>
+                      </div>
+                      <div class="col-12 col-md-6" v-if="movement.client_name">
+                        <div class="text-subtitle2">Cliente:</div>
+                        <div>{{ movement.client_name }}</div>
+                      </div>
+                      <div class="col-12" v-if="movement.notes">
+                        <div class="text-subtitle2">Notas:</div>
+                        <div>{{ movement.notes }}</div>
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
 
-                  <q-card flat bordered class="q-mb-lg" style="border-radius: 16px;">
-                    <q-card-section>
-                      <div class="text-h6 q-mb-md">Detalles del Movimiento</div>
-                      <div v-if="movement.details.length === 0" class="text-center q-pa-md">
-                        <q-icon name="inventory_2" size="48px" color="grey-5" />
-                        <div class="text-grey-6 q-mt-sm">No se han agregado productos</div>
-                      </div>
-                      <div v-else>
-                        <q-table
-                          :rows="formattedDetails"
-                          :columns="detailsColumns"
-                          row-key="index"
-                          dense
-                          hide-pagination
-                          flat
-                          bordered
-                          class="rounded-borders"
-                        />
-                        <div class="text-right q-mt-md text-h6">
-                          Total: {{ calculateGrandTotal() }}
-                        </div>
-                      </div>
-                    </q-card-section>
-                  </q-card>
-                </div>
+                <q-card flat bordered>
+                  <q-card-section>
+                    <div class="text-h6">Detalles del Movimiento</div>
+                    <q-table
+                      :rows="movementDetails"
+                      :columns="detailColumns"
+                      row-key="index"
+                      :pagination="{ rowsPerPage: 0 }"
+                      flat
+                      bordered
+                      hide-bottom
+                    >
+                      <template v-slot:body="props">
+                        <q-tr :props="props">
+                          <q-td key="product" :props="props">{{ getProductDetails(props.row) }}</q-td>
+                          <q-td key="quantity" :props="props">{{ props.row.quantity }}</q-td>
+                          <q-td key="unit_price" :props="props">{{ formatCurrency(props.row.unit_price) }}</q-td>
+                          <q-td key="total_price" :props="props">{{
+                            formatCurrency(calculateTotalPrice(props.row))
+                          }}</q-td>
+                        </q-tr>
+                      </template>
+                    </q-table>
+
+                    <div class="row justify-end q-mt-md">
+                      <div class="text-h6">Total: {{ formatCurrency(calculateGrandTotal()) }}</div>
+                    </div>
+                  </q-card-section>
+                </q-card>
               </div>
 
-              <!-- Navegación -->
+              <!-- Navigation -->
               <q-stepper-navigation class="navigation row items-center justify-between q-gutter-x-md q-mt-auto">
                 <div>
                   <q-btn
-                    :disable="isLoading"
-                    type="button"
                     @click="currentStep = 2"
                     color="primary"
                     class="q-px-xl q-py-sm"
@@ -437,14 +388,15 @@
                 <div>
                   <q-btn
                     :loading="isLoading"
-                    type="submit"
-                    @click="onSubmit"
-                    class="bg-primary text-white q-px-xl q-py-sm"
+                    @click="updateMovement"
+                    color="primary"
                     rounded
-                    flat
-                    label="Registrar Movimiento"
+                    class="bg-primary text-white q-px-xl q-py-sm"
+                    label="Actualizar Movimiento"
                   >
-                    <template v-slot:loading> <q-spinner class="on-left" /> </template>
+                    <template v-slot:loading>
+                      <q-spinner class="on-left" />
+                    </template>
                   </q-btn>
                 </div>
               </q-stepper-navigation>
@@ -458,258 +410,401 @@
 
 <script>
 import { ref, computed } from 'vue'
-import MethodsMixin from "src/mixins/MethodsMixin.js";
+import { useRouter, useRoute } from 'vue-router'
+import { useQuasar } from 'quasar'
+import MethodsMixin from 'src/mixins/MethodsMixin.js'
 import Title from 'components/elements/Title.vue'
-import { date } from 'quasar'
+import SelectInput from 'components/inputs/Select.vue'
 
 export default {
+  name: 'EditInventoryMovement',
   components: {
-    Title
+    Title,
+    SelectInput
   },
   mixins: [MethodsMixin],
+  setup() {
+    const $q = useQuasar()
+    const router = useRouter()
+    const route = useRoute()
+    return { $q, router, route }
+  },
   data() {
     return {
       currentStep: 1,
       steps: ['Información Básica', 'Detalles del Movimiento', 'Resumen y Confirmación'],
       isLoading: false,
+      movementId: null,
       movement: {
-        date: date.formatDate(new Date(), 'YYYY-MM-DD'),
-        direction: 'in',
+        direction: null,
         reason_type: null,
         supplier: null,
-        notes: '',
-        details: []
+        client_name: '',
+        notes: ''
       },
+      movementDetails: [],
+      errors: {
+        direction: '',
+        reason_type: '',
+        supplier: '',
+        client_name: '',
+        notes: ''
+      },
+      directionOptions: [
+        { label: 'Entrada', value: 'input' },
+        { label: 'Salida', value: 'output' }
+      ],
       reasonTypes: [],
       suppliers: [],
       primaryProducts: [],
-      finalProducts: [],
-      productColors: [],
-      directionOptions: [
-        { label: 'Entrada', value: 'in' },
-        { label: 'Salida', value: 'out' }
-      ],
-      productTypeOptions: [
-        { label: 'Producto Primario', value: 'primary' },
-        { label: 'Producto Final', value: 'final' }
-      ],
-      detailsColumns: [
-        { name: 'product_type', align: 'left', label: 'Tipo', field: 'product_type' },
-        { name: 'product_name', align: 'left', label: 'Producto', field: 'product_name' },
-        { name: 'color', align: 'left', label: 'Color', field: 'color' },
-        { name: 'quantity', align: 'right', label: 'Cantidad', field: 'quantity' },
-        { name: 'unit_price', align: 'right', label: 'Precio', field: 'unit_price' },
-        { name: 'total', align: 'right', label: 'Total', field: 'total' }
+      detailColumns: [
+        { name: 'product', label: 'Producto', field: 'product', align: 'left' },
+        { name: 'quantity', label: 'Cantidad', field: 'quantity', align: 'center' },
+        { name: 'unit_price', label: 'Precio Unitario', field: 'unit_price', align: 'right' },
+        { name: 'total_price', label: 'Precio Total', field: 'total_price', align: 'right' }
       ]
     }
   },
   computed: {
-    progressValue() {
-      return (this.currentStep / this.steps.length) * 100;
-    },
     verifyFirstStep() {
-      return !this.movement.date || !this.movement.direction;
+      const requiresClient =
+        this.movement.direction?.value === 'output' && !this.movement.client_name
+      return !this.movement.direction || !this.movement.reason_type || requiresClient
     },
-    verifyDetailsStep() {
-      if (this.movement.details.length === 0) return true;
-
-      return this.movement.details.some(detail => {
-        if (detail.product_type === 'primary') {
-          return !detail.primary_product || !detail.quantity || !detail.unit_price;
-        } else if (detail.product_type === 'final') {
-          return !detail.final_product || !detail.quantity || !detail.unit_price;
-        }
-        return true;
-      });
+    verifyDetails() {
+      if (this.movementDetails.length === 0) return true
+      return this.movementDetails.some(detail => {
+        return (
+          !detail.primary_product ||
+          (detail.availableColors.length > 0 && !detail.product_color) ||
+          !detail.quantity ||
+          detail.quantity <= 0 ||
+          detail.unit_price < 0
+        )
+      })
     },
-    formattedDetails() {
-      return this.movement.details.map((detail, index) => {
-        const productName = detail.product_type === 'primary'
-          ? this.getPrimaryProductName(detail.primary_product)
-          : this.getFinalProductName(detail.final_product);
-
-        const color = detail.product_type === 'final'
-          ? this.getColorName(detail.product_color)
-          : '-';
-
-        return {
-          index,
-          product_type: detail.product_type === 'primary' ? 'Primario' : 'Final',
-          product_name: productName,
-          color,
-          quantity: detail.quantity,
-          unit_price: `$${parseFloat(detail.unit_price).toFixed(2)}`,
-          total: `$${this.calculateTotal(detail, true)}`
-        };
-      });
+    progressValue() {
+      return (this.currentStep / this.steps.length) * 100
     }
   },
   methods: {
     getStepIcon(step) {
-      const icons = { 1: 'assignment', 2: 'inventory_2', 3: 'summarize' };
-      return icons[step];
-    },
-    formatDate(dateStr) {
-      if (!dateStr) return '';
-      return date.formatDate(dateStr, 'DD/MM/YYYY');
-    },
-    getDirectionDisplay(direction) {
-      const option = this.directionOptions.find(opt => opt.value === direction);
-      return option ? option.label : '';
-    },
-    getReasonTypeName(id) {
-      const reason = this.reasonTypes.find(r => r.id === id);
-      return reason ? reason.name : '';
-    },
-    getSupplierName(id) {
-      const supplier = this.suppliers.find(s => s.id === id);
-      return supplier ? supplier.name : '';
-    },
-    getPrimaryProductName(id) {
-      const product = this.primaryProducts.find(p => p.id === id);
-      return product ? product.name : '';
-    },
-    getFinalProductName(id) {
-      const product = this.finalProducts.find(p => p.id === id);
-      return product ? product.name : '';
-    },
-    getColorName(id) {
-      const color = this.productColors.find(c => c.id === id);
-      return color ? color.name : '';
-    },
-    calculateTotal(detail, rawValue = false) {
-      const quantity = parseFloat(detail.quantity) || 0;
-      const price = parseFloat(detail.unit_price) || 0;
-      const total = quantity * price;
-      return rawValue ? total.toFixed(2) : `$${total.toFixed(2)}`;
-    },
-    calculateGrandTotal() {
-      const total = this.movement.details.reduce((acc, detail) => {
-        const quantity = parseFloat(detail.quantity) || 0;
-        const price = parseFloat(detail.unit_price) || 0;
-        return acc + (quantity * price);
-      }, 0);
-      return `$${total.toFixed(2)}`;
-    },
-    addDetail() {
-      this.movement.details.push({
-        product_type: 'primary',
-        primary_product: null,
-        final_product: null,
-        product_color: null,
-        quantity: '',
-        unit_price: ''
-      });
-    },
-    removeDetail(index) {
-      this.movement.details.splice(index, 1);
+      const icons = { 1: 'info', 2: 'list_alt', 3: 'done_all' }
+      return icons[step] || 'help'
     },
     nextStep() {
       if (this.currentStep < this.steps.length) {
-        this.currentStep++;
+        this.currentStep++
       }
     },
-    loadData() {
-      this.isLoading = true;
-
-      // Cargar tipos de razón
-      this.$store.dispatch("general/getReasonTypes", { root: true })
-        .then((response) => {
-          this.reasonTypes = response.data.data;
-        })
-        .catch((error) => {
-          this.alertError("Error al cargar los tipos de razón");
-        });
-
-      // Cargar proveedores
-      this.$store.dispatch("provedores/getSuppliers", { root: true })
-        .then((response) => {
-          this.suppliers = response.data.data;
-        })
-        .catch((error) => {
-          this.alertError("Error al cargar los proveedores");
-        });
-
-      // Cargar productos primarios
-      this.$store.dispatch("general/getPrimaryProduct", { root: true })
-        .then((response) => {
-          this.primaryProducts = response.data.data;
-        })
-        .catch((error) => {
-          this.alertError("Error al cargar los productos primarios");
-        });
-
-      // Cargar productos finales
-      this.$store.dispatch("general/getFinalProduct", { root: true })
-        .then((response) => {
-          this.finalProducts = response.data.data;
-        })
-        .catch((error) => {
-          this.alertError("Error al cargar los productos finales");
-        });
-
-      // Cargar colores de productos
-      this.$store.dispatch("general/getProductColors", { root: true })
-        .then((response) => {
-          this.productColors = response.data.data;
-        })
-        .catch((error) => {
-          this.alertError("Error al cargar los colores de productos");
-        })
-        .finally(() => {
-          this.isLoading = false;
-        });
+    goTo(path) {
+      this.router.push(path)
     },
-    preparePayload() {
-      const formattedDetails = this.movement.details.map(detail => {
-        const payload = {
-          quantity: parseFloat(detail.quantity),
-          unit_price: parseFloat(detail.unit_price)
-        };
+    addMovementDetail() {
+      this.movementDetails.push({
+        primary_product: null,
+        product_color: null,
+        quantity: 1,
+        unit_price: 0,
+        availableColors: [],
+        errors: {
+          primary_product: '',
+          product_color: '',
+          quantity: '',
+          unit_price: ''
+        }
+      })
+    },
+    removeMovementDetail(index) {
+      this.movementDetails.splice(index, 1)
+    },
+    async loadProductColors(primaryProductId, index) {
+      if (!primaryProductId) {
+        this.movementDetails[index].availableColors = []
+        this.movementDetails[index].product_color = null
+        return
+      }
+      this.isLoading = true
+      try {
+        const response = await this.$store.dispatch('general/getProductColors', primaryProductId, {
+          root: true
+        })
+        if (response.data?.data) {
+          this.movementDetails[index].availableColors = response.data.data.map(color => ({
+            label: color.color,
+            value: color.id
+          }))
+          this.movementDetails[index].product_color = null
+        }
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Error al cargar los colores del producto'
+        })
+      } finally {
+        this.isLoading = false
+      }
+    },
+    calculateTotalPrice(detail) {
+      if (!detail || !detail.quantity || !detail.unit_price) return 0
+      return parseFloat(detail.quantity) * parseFloat(detail.unit_price)
+    },
+    calculateGrandTotal() {
+      const total = this.movementDetails
+        .reduce((total, detail) => {
+          return total + this.calculateTotalPrice(detail)
+        }, 0)
+        .toFixed(2)
+      return total
+    },
+    getProductDetails(detail) {
+      if (!detail.primary_product) return '';
 
-        if (detail.product_type === 'primary') {
-          payload.primary_product = detail.primary_product;
-        } else if (detail.product_type === 'final') {
-          payload.final_product = detail.final_product;
-          if (detail.product_color) {
-            payload.product_color = detail.product_color;
-          }
+      let productName = '';
+      if (typeof detail.primary_product === 'object') {
+        productName = detail.primary_product.label || detail.primary_product.name || '';
+      } else {
+        const product = this.primaryProducts.find(p => p.value === detail.primary_product);
+        productName = product ? product.label : detail.primary_product;
+      }
+
+      let colorName = '';
+      if (detail.product_color) {
+        if (typeof detail.product_color === 'object') {
+          colorName = detail.product_color.label || detail.product_color.name || '';
+        } else {
+          const color = detail.availableColors.find(c => c.value === detail.product_color);
+          colorName = color ? color.label : detail.product_color;
+        }
+      }
+
+      return colorName ? `${productName} (${colorName})` : productName;
+    },
+    getDirectionLabel(value) {
+      const option = this.directionOptions.find(opt => opt.value === value)
+      return option ? option.label : ''
+    },
+    getReasonTypeLabel(value) {
+      const option = this.reasonTypes.find(opt => opt.value === value)
+      return option ? option.label : ''
+    },
+    getSupplierLabel(value) {
+      const option = this.suppliers.find(opt => opt.value === value)
+      return option ? option.label : ''
+    },
+    formatCurrency(value) {
+      return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(value)
+    },
+    validateFirstStep() {
+      this.errors = {
+        direction: this.movement.direction ? '' : 'La dirección es requerida',
+        reason_type: this.movement.reason_type ? '' : 'La razón es requerida',
+        supplier: '',
+        client_name:
+          this.movement.direction?.value === 'output' && !this.movement.client_name
+            ? 'El nombre del cliente es requerido para salidas'
+            : '',
+        notes: ''
+      }
+      return Object.values(this.errors).every(error => !error)
+    },
+    validateDetails() {
+      this.movementDetails.forEach(detail => {
+        detail.errors = {
+          primary_product: detail.primary_product ? '' : 'El producto primario es requerido',
+          product_color:
+            detail.availableColors.length > 0 && !detail.product_color
+              ? 'El color es requerido'
+              : '',
+          quantity: detail.quantity > 0 ? '' : 'La cantidad debe ser mayor a 0',
+          unit_price: detail.unit_price >= 0 ? '' : 'El precio unitario no puede ser negativo'
+        }
+      })
+      return this.movementDetails.every(detail => Object.values(detail.errors).every(error => !error))
+    },
+    async loadMovementData() {
+      this.isLoading = true
+      try {
+        const response = await this.$store.dispatch('movement/getMovementId', this.movementId, {
+          root: true
+        })
+        const movementData = response.data.data
+
+        // Mapear dirección a objeto compatible con SelectInput
+        this.movement.direction = this.directionOptions.find(opt =>
+          opt.value === movementData.direction.toLowerCase())
+
+        // Mapear reason_type a objeto compatible con SelectInput
+        if (movementData.reason_type) {
+          this.movement.reason_type = this.reasonTypes.find(rt =>
+            rt.value === movementData.reason_type.id)
         }
 
-        return payload;
-      });
+        // Mapear supplier a objeto compatible con SelectInput
+        if (movementData.supplier) {
+          this.movement.supplier = this.suppliers.find(s =>
+            s.value === movementData.supplier.id)
+        }
 
-      return {
-        date: this.movement.date,
-        direction: this.movement.direction,
-        reason_type: this.movement.reason_type,
-        supplier: this.movement.supplier,
-        notes: this.movement.notes,
-        details: formattedDetails
-      };
+        this.movement.client_name = movementData.client_name || ''
+        this.movement.notes = movementData.notes || ''
+
+        // Procesar los detalles de movimiento
+        this.movementDetails = await Promise.all(
+          movementData.details.map(async detail => {
+            // Encontrar el producto en primaryProducts
+            const primaryProductObj = this.primaryProducts.find(p =>
+              p.value === detail.primary_product.id)
+
+            const detailObj = {
+              primary_product: primaryProductObj ? primaryProductObj.value : null,
+              quantity: detail.quantity,
+              unit_price: detail.unit_price,
+              availableColors: [],
+              errors: {
+                primary_product: '',
+                product_color: '',
+                quantity: '',
+                unit_price: ''
+              }
+            }
+
+            // Cargar colores disponibles
+            if (detailObj.primary_product) {
+              const colorResponse = await this.$store.dispatch(
+                'general/getProductColors',
+                detailObj.primary_product,
+                { root: true }
+              )
+
+              if (colorResponse.data?.data) {
+                detailObj.availableColors = colorResponse.data.data.map(color => ({
+                  label: color.color,
+                  value: color.id
+                }))
+
+                // Asignar color si existe
+                if (detail.product_color) {
+                  detailObj.product_color = detail.product_color.id
+                }
+              }
+            }
+
+            return detailObj
+          })
+        )
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Error al cargar los datos del movimiento'
+        })
+        this.router.push('/movements')
+      } finally {
+        this.isLoading = false
+      }
     },
-    onSubmit() {
-      this.isLoading = true;
-      const payload = this.preparePayload();
+    async updateMovement() {
+      if (!this.validateFirstStep() || !this.validateDetails()) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Por favor, corrige los errores en el formulario'
+        })
+        return
+      }
 
-      this.$store.dispatch("inventory/createMovement", payload, { root: true })
-        .then((response) => {
-          if (response.data.status === "OK") {
-            this.alertSuccess(response.data.msg || "Movimiento registrado con éxito");
-            this.goTo('/inventory');
-          }
+      this.isLoading = true
+
+      try {
+        // Construir el payload según el formato requerido por la API
+        const payload = {
+          id: this.movementId,
+          // Convertir input/output a IN/OUT como espera el backend
+          direction: this.movement.direction.value === 'input' ? 'IN' : 'OUT',
+          // El backend espera IDs directamente, no objetos
+          reason_type: this.movement.reason_type.value,
+          notes: this.movement.notes || '',
+          client_name: this.movement.client_name || '',
+          total_price: parseFloat(this.calculateGrandTotal()),
+          // Enviar ID del proveedor o null si no hay selección
+          supplier: this.movement.supplier ? this.movement.supplier.value : null,
+          details: this.movementDetails.map(detail => ({
+            // Enviar solo los IDs, no los objetos completos
+            primary_product: detail.primary_product,
+            product_color: detail.product_color || null,
+            quantity: detail.quantity,
+            unit_price: detail.unit_price
+          }))
+        }
+
+        const response = await this.$store.dispatch('movement/updatedMovementId', payload, {
+          root: true
         })
-        .catch((error) => {
-          this.alertError(error.response?.data?.msg || "Error al registrar el movimiento");
+
+        if (response.data.status === 'OK') {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.msg || 'Movimiento actualizado exitosamente'
+          })
+          this.router.push('/movements')
+        } else {
+          throw new Error(response.data.msg || 'Error desconocido')
+        }
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          message: `Error: ${error.response?.data?.msg || error.message || 'No se pudo actualizar el movimiento'}`
         })
-        .finally(() => {
-          this.isLoading = false;
-        });
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async loadData() {
+      this.isLoading = true
+      try {
+        const reasonTypesResponse = await this.$store.dispatch('movement/getReasonTypes', {
+          root: true
+        })
+        this.reasonTypes = reasonTypesResponse.data.data.map(item => ({
+          label: item.name,
+          value: item.id
+        }))
+        const suppliersResponse = await this.$store.dispatch('provedores/getSupplier', {
+          root: true
+        })
+        this.suppliers = suppliersResponse.data.data.map(item => ({
+          label: item.company_name,
+          value: item.id
+        }))
+        const primaryProductsResponse = await this.$store.dispatch(
+          'general/getPrimaryProduct',
+          { root: true }
+        )
+        this.primaryProducts = primaryProductsResponse.data.data.map(item => ({
+          label: item.name,
+          value: item.id
+        }))
+        await this.loadMovementData()
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Error al cargar los datos iniciales'
+        })
+      } finally {
+        this.isLoading = false
+      }
     }
   },
   mounted() {
-    this.loadData();
-    this.addDetail(); // Agregar un detalle por defecto
+    this.movementId = this.route.params.id
+    if (!this.movementId) {
+      this.$q.notify({
+        type: 'negative',
+        message: 'ID de movimiento no proporcionado'
+      })
+      this.router.push('/movements')
+      return
+    }
+    this.loadData()
   }
 }
 </script>
@@ -721,7 +816,7 @@ export default {
 
 .content {
   flex: 1;
-  overflow-y: auto; /* Para permitir el desplazamiento si el contenido es muy largo */
+  overflow-y: auto;
 }
 
 .navigation {
@@ -752,7 +847,6 @@ export default {
   opacity: 0.6;
 }
 
-/* Para los inputs */
 :deep(.q-field--outlined .q-field__control) {
   border-radius: 12px;
 }
@@ -761,12 +855,10 @@ export default {
   border-color: var(--q-primary);
 }
 
-/* Para los botones */
 .q-btn {
   text-transform: none;
 }
 
-/* Para el progress */
 :deep(.q-circular-progress__text) {
   font-weight: 600;
 }
