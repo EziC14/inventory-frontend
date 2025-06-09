@@ -20,6 +20,7 @@ const routes = [
       { path: "edit-provider/:id", meta: { auth: true },component: () => import("pages/Provedores/Edit.vue") },
       { path: "edit-product/:id", meta: { auth: true },component: () => import("pages/EditProduct.vue") },
       { path: "edit-movement/:id", meta: { auth: true },component: () => import("pages/Movimientos/Edit.vue") },
+      { path: "ia-created-movement", meta: { auth: true },component: () => import("pages/Movimientos/IAmovent.vue") },
       { path: 'login', meta: { auth: false }, component: () => import('src/pages/auth/LoginPage.vue') },
       { path: 'register', meta: { auth: false }, component: () => import('src/pages/auth/RegisterPage.vue') },
       { path: 'logout', meta: { auth: false }, component: () => import('src/pages/auth/LogoutPage.vue') },

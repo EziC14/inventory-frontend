@@ -512,6 +512,7 @@ export default {
       const payload = {
         id: this.supplier.id,
         name: this.supplier.name,
+        ruc: this.supplier.ruc || "",
         contact_name: this.supplier.contact_name || "",
         company_name: this.supplier.company_name || "",
         phone: this.supplier.phone || "",

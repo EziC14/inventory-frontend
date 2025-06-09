@@ -639,6 +639,7 @@ export default {
         .then((response) => {
           if (response.data.status === "OK") {
             this.alertSuccess(response.data.msg);
+            this.goTo("/product");
           }
         })
         .finally(() => {

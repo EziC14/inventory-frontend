@@ -19,6 +19,17 @@
         </q-btn>
         <q-btn
           v-if="!$q.screen.xs"
+          @click="goTo('/ia-created-movement')"
+          class="bg-primary text-white"
+          icon="add"
+          :rounded="!$q.screen.xs"
+          :round="$q.screen.xs"
+          flat
+          :label="!$q.screen.xs ? 'Subir documento' : ''"
+        >
+        </q-btn>
+        <q-btn
+          v-if="!$q.screen.xs"
           @click="goTo('/created-movement')"
           class="bg-primary text-white"
           icon="add"
@@ -809,22 +820,24 @@ export default {
     },
 
     async deleteMovement() {
-      this.deleting = true;
-      try {
-        const response = await this.$axios.delete(`/api/movements/${this.selectedMovement.id}/`);
-        if (response.data.status === 'OK') {
-          await this.fetchMovements();
-          this.alertSuccess('Movimiento eliminado correctamente');
-        } else {
-          this.alertError(response.data.msg || 'Error al eliminar el movimiento');
-        }
-      } catch (error) {
-        console.error('Error al eliminar movimiento:', error);
-        this.alertError(error?.response?.data?.msg || 'Error al eliminar el movimiento');
-      } finally {
-        this.deleting = false;
-      }
-    },
+  this.deleting = true;
+  try {
+    const result = await this.$store.dispatch('movement/deleteMovement', this.selectedMovement.id);
+    const response = result.data;
+    console.log('Response:', response);
+    if (response.status === 'OK') {
+      await this.fetchMovements();
+      this.alertSuccess('Movimiento eliminado correctamente');
+    } else {
+      this.alertError(response.msg || 'Error al eliminar el movimiento');
+    }
+  } catch (error) {
+    console.error('Error al eliminar movimiento:', error);
+    this.alertError(error?.response?.data?.msg || 'Error al eliminar el movimiento');
+  } finally {
+    this.deleting = false;
+  }
+},
 
     moveFab(ev) {
       this.fabPos = [this.fabPos[0] - ev.delta.x, this.fabPos[1] - ev.delta.y];

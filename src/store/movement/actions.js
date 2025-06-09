@@ -15,6 +15,10 @@ export function updatedMovementId({ dispatch, commit }, payload) {
   return api.put(`/movement/${payload.id}`, payload);
 }
 
+export function deleteMovement({ dispatch, commit }, id) {
+  return api.delete(`/movement/${id}`);
+}
+
 export function setMovement({ dispatch, commit }, payload) {
   return api.post(`/movement/`, payload);
 }
@@ -37,4 +41,8 @@ export function setReasonType({ dispatch, commit }, payload) {
 
 export function deleteReasonType({ dispatch, commit }, id) {
   return api.delete(`/movement/reason-types/${id}`);
+}
+
+export function iaCreated({ dispatch, commit }, payload) {
+  return api.post(`/movement/analyze-document`, payload);
 }

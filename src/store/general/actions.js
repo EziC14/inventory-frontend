@@ -18,7 +18,7 @@ export function setProducts({ commit }, payload) {
 export function getProductsFilter({ dispatch, commit }, payload) {
   return new Promise(function (resolve, reject) {
     api
-      .get(`/product?${payload}`)
+      .get(`/product/?${payload}`)
       .then((response) => {
         if (response.data.status === "OK") {
           dispatch("general/setProducts", response.data.data, { root: true });
