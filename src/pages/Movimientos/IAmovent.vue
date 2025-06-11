@@ -160,7 +160,7 @@
                       :options="directionOptions"
                       icon="swap_horiz"
                       :isRequired="true"
-                      labelBody="Tipo de Movimiento"
+                      labelBody="Dirección de Movimiento"
                       iconPosition="prepend"
                     />
 

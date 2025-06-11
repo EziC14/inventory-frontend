@@ -72,9 +72,9 @@
             <template v-for="col in props.cols" :key="col.name">
               <q-td
                 :props="props"
-                :class="col.name === 'direction' ? getTypeClass(col.value) : ''"
+                :class="col.name === 'direction_display' ? getTypeClass(col.value) : ''"
               >
-                <span v-if="col.name === 'direction'">{{ col.value === 'input' ? 'Entrada' : 'Salida' }}</span>
+                <span v-if="col.name === 'direction_display'">{{ col.value }}</span>
                 <span v-else-if="col.name === 'date'">{{ formatDate(col.value) }}</span>
                 <span v-else-if="col.name === 'reason_type'">{{ col.value ? col.value.name : '' }}</span>
                 <span v-else-if="col.name === 'supplier'">{{ col.value ? col.value.name : '' }}</span>
@@ -137,7 +137,7 @@
           <div class="q-pa-md">
             <q-card class="movement-card q-mb-md">
               <q-card-section :class="getTypeBgClass(props.row.direction)">
-                <div class="text-h6">{{ props.row.direction === 'input' ? 'Entrada' : 'Salida' }}</div>
+                <div class="text-h6">{{ getDirectionLabel(props.row.direction) }}</div>
                 <div class="text-subtitle2">{{ formatDate(props.row.date) }}</div>
               </q-card-section>
 
@@ -214,8 +214,6 @@
         <q-pagination
           v-model="pagination.page"
           :max="Math.ceil(filteredMovements.length / pagination.rowsPerPage)"
-          input
-          input-class="text-black"
           color="black"
         />
       </div>
@@ -370,14 +368,14 @@
               <q-item-section avatar>
                 <q-icon
                   name="swap_horiz"
-                  :color="selectedMovement.direction === 'input' ? 'positive' : 'negative'"
+                  :color="selectedMovement.direction === 'Entrada' ? 'positive' : 'negative'"
                   size="sm"
                 />
               </q-item-section>
               <q-item-section>
                 <q-item-label caption>Tipo de Movimiento</q-item-label>
                 <q-item-label class="text-weight-medium">{{
-                  selectedMovement.direction === 'input' ? 'Entrada' : 'Salida'
+                  getDirectionLabel(selectedMovement.direction)
                 }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -545,13 +543,13 @@ export default {
       deleting: false,
       deleteDialog: false,
       selectedMovement: null,
-      visibleColumns: ["direction", "date", "quantity", "supplier", "total_price", "reason_type"],
+      visibleColumns: ["direction_display", "date", "quantity", "supplier", "total_price", "reason_type"],
       columns: [
         {
-          name: "direction",
+          name: "direction_display",
           label: "Tipo de Movimiento",
           align: "left",
-          field: "direction",
+          field: "direction_display",
           sortable: true
         },
         {
@@ -630,8 +628,8 @@ export default {
         dateTo: ''
       },
       directionOptions: [
-        { label: 'Entrada', value: 'input' },
-        { label: 'Salida', value: 'output' }
+        { label: 'Entrada', value: 'Entrada' },
+        { label: 'Salida', value: 'Salida' }
       ],
       reasonTypeOptions: [],
       supplierOptions: [],
@@ -659,7 +657,9 @@ export default {
 
       // Filtro por Tipo de Movimiento
       if (this.filters.direction) {
-        result = result.filter(movement => movement.direction === this.filters.direction);
+        result = result.filter(movement =>
+          this.getDirectionLabel(movement.direction) === this.filters.direction
+        );
       }
 
       // Filtro por tipo de razón
@@ -790,11 +790,18 @@ export default {
     },
 
     getTypeClass(type) {
-      return type === 'input' ? 'text-positive' : 'text-negative';
+      // type ahora será 'Entrada' o 'Salida' (direction_display)
+      return type === 'Entrada' ? 'text-positive' : (type === 'Salida' ? 'text-negative' : '');
     },
 
     getTypeBgClass(type) {
-      return type === 'input' ? 'bg-positive text-white' : 'bg-negative text-white';
+      return this.getDirectionLabel(type) === 'Entrada' ? 'bg-positive text-white' : 'bg-negative text-white';
+    },
+
+    getDirectionLabel(direction) {
+      if (direction === 'IN' || direction === 'Entrada') return 'Entrada';
+      if (direction === 'OUT' || direction === 'Salida') return 'Salida';
+      return direction;
     },
 
     onCloseDrawer() {

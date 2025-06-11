@@ -8,6 +8,7 @@ const routes = [
       { path: "movements", meta: { auth: true },component: () => import("pages/Movimientos/Index.vue") },
       { path: "settings/categories" , meta: { auth: true },component: () => import("pages/Administration/Category.vue") },
       { path: "settings/movement-reasons" , meta: { auth: true },component: () => import("pages/Administration/Razones.vue") },
+      { path: "reports", meta: { auth: true }, component: () => import("pages/Reporte/Index.vue") },
     ],
   },
   {

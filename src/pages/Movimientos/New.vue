@@ -90,7 +90,7 @@
                       :options="directionOptions"
                       icon="swap_horiz"
                       :isRequired="true"
-                      labelBody="Razón de Movimiento"
+                      labelBody="Dirección de Movimiento"
                       iconPosition="prepend"
                     />
 
@@ -101,7 +101,7 @@
                       :options="reasonTypes"
                       icon="category"
                       :isRequired="true"
-                      labelBody="Razón de Movimiento"
+                      labelBody="Motivo del Movimiento"
                       iconPosition="prepend"
                     />
 
@@ -121,7 +121,7 @@
                         v-model="movement.client_name"
                         outlined
                         label="Nombre del Cliente"
-                        :rules="[val => movement.direction && movement.direction.value === 'OUT' ? !!val || 'Nombre del cliente requerido para salidas' : true]"
+                        :rules="[val => movement.direction && movement.direction.value === 'OUT' ? !!val || 'Nombre del cliente requerido para Salida' : true]"
                       />
                     </div>
 
@@ -191,19 +191,19 @@
 
                 <div v-else class="q-pa-md">
 
-  <div v-for="(detail, index) in movementDetails" :key="index" class="q-mb-lg">
-    <q-card class="movement-detail-card" bordered>
-      <q-card-section class="bg-primary text-white">
-        <div class="row items-center justify-between">
-          <div class="text-subtitle1">Detalle #{{ index + 1 }}</div>
-          <q-btn flat round dense icon="delete" color="white" @click="removeMovementDetail(index)" />
-        </div>
-      </q-card-section>
+                  <div v-for="(detail, index) in movementDetails" :key="index" class="q-mb-lg">
+                    <q-card class="movement-detail-card" bordered>
+                      <q-card-section class="bg-primary text-white">
+                        <div class="row items-center justify-between">
+                          <div class="text-subtitle1">Detalle #{{ index + 1 }}</div>
+                          <q-btn flat round dense icon="delete" color="white" @click="removeMovementDetail(index)" />
+                        </div>
+                      </q-card-section>
 
-      <q-card-section>
-        <div class="row q-col-gutter-md">
-          <!-- Primera fila -->
-          <div class="col-12 col-md-6">
+                      <q-card-section>
+                        <div class="row q-col-gutter-md">
+                          <!-- Primera fila -->
+                          <div class="col-12 col-md-6">
                             <q-select
                               v-model="detail.primary_product"
                               :options="primaryProducts"
@@ -226,61 +226,61 @@
                             />
                           </div>
 
-          <!-- Segunda fila -->
-          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
-            <q-input
-              v-model.number="detail.quantity"
-              type="number"
-              label="Cantidad"
-              outlined
-              dense
-              min="1"
-            >
-            </q-input>
-          </div>
+                          <!-- Segunda fila -->
+                          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
+                            <q-input
+                              v-model.number="detail.quantity"
+                              type="number"
+                              label="Cantidad"
+                              outlined
+                              dense
+                              min="1"
+                            >
+                            </q-input>
+                          </div>
 
-          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
-            <q-input
-              v-model.number="detail.unit_price"
-              type="number"
-              label="Precio Unitario"
-              outlined
-              dense
-              min="0"
-              step="0.01"
-            >
-              <template v-slot:prepend>
-                <q-icon name="attach_money" color="primary" />
-              </template>
-              <template v-slot:append>
-                <div class="text-caption">S/.</div>
-              </template>
-            </q-input>
-          </div>
+                          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
+                            <q-input
+                              v-model.number="detail.unit_price"
+                              type="number"
+                              label="Precio Unitario"
+                              outlined
+                              dense
+                              min="0"
+                              step="0.01"
+                            >
+                              <template v-slot:prepend>
+                                <q-icon name="attach_money" color="primary" />
+                              </template>
+                              <template v-slot:append>
+                                <div class="text-caption">S/.</div>
+                              </template>
+                            </q-input>
+                          </div>
 
-          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
-            <div class="price-total-container">
-              <div class="text-subtitle2">Precio Total</div>
-              <div class="text-subtitle2 q-mt-none">
-                <span class="text-primary">S/.</span>
-                {{ detail.quantity && detail.unit_price ? (detail.quantity * detail.unit_price).toFixed(2) : '0.00' }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </q-card-section>
-    </q-card>
-  </div>
+                          <div class="col-12 col-md-4" v-if="detail.availableColors.length">
+                            <div class="price-total-container">
+                              <div class="text-subtitle2">Precio Total</div>
+                              <div class="text-subtitle2 q-mt-none">
+                                <span class="text-primary">S/.</span>
+                                {{ detail.quantity && detail.unit_price ? (detail.quantity * detail.unit_price).toFixed(2) : '0.00' }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </div>
 
-  <div class="q-mt-md">
-    <q-btn
-      color="primary"
-      icon="add"
-      label="Agregar Producto"
-      @click="addMovementDetail"
-    />
-  </div>
-</div>
+                  <div class="q-mt-md">
+                    <q-btn
+                      color="primary"
+                      icon="add"
+                      label="Agregar Producto"
+                      @click="addMovementDetail"
+                    />
+                  </div>
+                </div>
               </div>
 
               <!-- Navigation -->
@@ -631,7 +631,7 @@ export default {
       this.isLoading = true
 
       const payload = {
-        direction: this.movement.direction.value,
+        direction: this.movement.direction.value === 'input' ? 'IN' : 'OUT',
         reason_type: this.movement.reason_type.value,
         notes: this.movement.notes || '',
         client_name: this.movement.client_name || '',

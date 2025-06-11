@@ -322,6 +322,12 @@ export default {
         description: 'Registrar entradas y salidas de productos',
       },
       {
+        label: 'Reportes',
+        path: '/reports',
+        icon: 'bar_chart',
+        description: 'Ver reportes y estadísticas'
+      },
+      {
         label: 'Configuración',
         path: '/settings',
         icon: 'settings',
@@ -341,26 +347,6 @@ export default {
           }
         ]
       },
-      {
-        label: 'Reportes',
-        path: '/reports',
-        icon: 'bar_chart',
-        description: 'Ver reportes y estadísticas',
-        children: [
-          {
-            label: 'Reporte de Ventas',
-            path: '/reports/sales',
-            icon: 'trending_up',
-            description: 'Análisis de ventas'
-          },
-          {
-            label: 'Inventario',
-            path: '/reports/inventory',
-            icon: 'assessment',
-            description: 'Estado del inventario'
-          }
-        ]
-      }
     ]
 
     // Función para verificar si un ítem del menú está activo

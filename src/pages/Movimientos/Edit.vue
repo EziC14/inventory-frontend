@@ -120,7 +120,7 @@
                         v-model="movement.client_name"
                         outlined
                         label="Nombre del Cliente"
-                        :rules="[val => movement.direction && movement.direction.value === 'output' ? !!val || 'Nombre del cliente requerido para salidas' : true]"
+                        :rules="[val => movement.direction && movement.direction.value === 'output' ? !!val || 'Nombre del cliente requerido para Salida' : true]"
                       />
                     </div>
 
@@ -631,8 +631,10 @@ export default {
         const movementData = response.data.data
 
         // Mapear dirección a objeto compatible con SelectInput
+        const directionMap = { 'IN': 'input', 'OUT': 'output' }
         this.movement.direction = this.directionOptions.find(opt =>
-          opt.value === movementData.direction.toLowerCase())
+          opt.value === directionMap[movementData.direction]
+        )
 
         // Mapear reason_type a objeto compatible con SelectInput
         if (movementData.reason_type) {
@@ -654,13 +656,15 @@ export default {
           movementData.details.map(async detail => {
             // Encontrar el producto en primaryProducts
             const primaryProductObj = this.primaryProducts.find(p =>
-              p.value === detail.primary_product.id)
+              p.value === detail.primary_product?.id
+            )
 
             const detailObj = {
-              primary_product: primaryProductObj ? primaryProductObj.value : null,
+              primary_product: primaryProductObj || null,
               quantity: detail.quantity,
               unit_price: detail.unit_price,
               availableColors: [],
+              product_color: null,
               errors: {
                 primary_product: '',
                 product_color: '',
@@ -670,10 +674,10 @@ export default {
             }
 
             // Cargar colores disponibles
-            if (detailObj.primary_product) {
+            if (primaryProductObj) {
               const colorResponse = await this.$store.dispatch(
                 'general/getProductColors',
-                detailObj.primary_product,
+                primaryProductObj.value,
                 { root: true }
               )
 
@@ -685,7 +689,9 @@ export default {
 
                 // Asignar color si existe
                 if (detail.product_color) {
-                  detailObj.product_color = detail.product_color.id
+                  detailObj.product_color = detailObj.availableColors.find(c =>
+                    c.value === detail.product_color.id
+                  ) || null
                 }
               }
             }
@@ -722,15 +728,13 @@ export default {
           direction: this.movement.direction.value === 'input' ? 'IN' : 'OUT',
           // El backend espera IDs directamente, no objetos
           reason_type: this.movement.reason_type.value,
-          notes: this.movement.notes || '',
-          client_name: this.movement.client_name || '',
+          supplier: this.movement.supplier ? (this.movement.supplier.value || this.movement.supplier) : null,
+          client_name: this.movement.client_name,
+          notes: this.movement.notes,
           total_price: parseFloat(this.calculateGrandTotal()),
-          // Enviar ID del proveedor o null si no hay selección
-          supplier: this.movement.supplier ? this.movement.supplier.value : null,
           details: this.movementDetails.map(detail => ({
-            // Enviar solo los IDs, no los objetos completos
-            primary_product: detail.primary_product,
-            product_color: detail.product_color || null,
+            primary_product: detail.primary_product?.value || detail.primary_product || null,
+            product_color: detail.product_color?.value || detail.product_color || null,
             quantity: detail.quantity,
             unit_price: detail.unit_price
           }))
