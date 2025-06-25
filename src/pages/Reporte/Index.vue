@@ -1,72 +1,163 @@
 <template>
   <q-page padding>
     <div class="row q-col-gutter-md">
-      <!-- Filtros de fecha -->
       <div class="col-12">
-        <q-card class="my-card">
+        <q-card flat bordered class="filter-card">
           <q-card-section>
-            <div class="row items-center q-gutter-sm">
-              <div class="text-h6">Filtros</div>
+            <div class="row items-center q-gutter-md">
+              <div class="text-h6 text-wine">
+                Filtros de Reporte
+              </div>
               <q-space />
-              <q-input v-model="filters.startDate" type="date" dense outlined label="Fecha Inicio" />
-              <q-input v-model="filters.endDate" type="date" dense outlined label="Fecha Fin" />
-              <q-btn color="primary" icon="refresh" label="Actualizar" @click="fetchAllData" />
+              <q-input
+                v-model="filters.startDate"
+                type="date"
+                dense
+                outlined
+                label="Fecha Inicio"
+                class="filter-input"
+              />
+              <q-input
+                v-model="filters.endDate"
+                type="date"
+                dense
+                outlined
+                label="Fecha Fin"
+                class="filter-input"
+              />
+              <q-btn
+                color="grey-8"
+                icon="refresh"
+                label="Actualizar"
+                @click="fetchAllData"
+                flat
+                no-caps
+              />
+              <q-btn
+                color="grey-8"
+                icon="download"
+                label="Descargar Excel"
+                @click="downloadExcel"
+                flat
+                no-caps
+              />
             </div>
           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Resumen de Movimientos -->
-      <div class="col-12 col-md-6">
-        <q-card class="my-card">
+      <!-- Métricas principales -->
+      <div class="col-12">
+        <div class="row q-col-gutter-md">
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card flat bordered class="metric-card">
+              <q-card-section>
+                <div class="text-h4 text-wine">{{ totalMovements }}</div>
+                <div class="text-caption text-wine-light">Total Movimientos</div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card flat bordered class="metric-card">
+              <q-card-section>
+                <div class="text-h4 text-wine">{{ formatCurrency(totalValue) }}</div>
+                <div class="text-caption text-wine-light">Valor Total</div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card flat bordered class="metric-card">
+              <q-card-section>
+                <div class="text-h4 text-wine">{{ entriesCount }}</div>
+                <div class="text-caption text-wine-light">Entradas</div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <q-card flat bordered class="metric-card">
+              <q-card-section>
+                <div class="text-h4 text-wine">{{ exitsCount }}</div>
+                <div class="text-caption text-wine-light">Salidas</div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficos principales -->
+      <div class="col-12 col-lg-8">
+        <q-card flat bordered class="chart-card">
           <q-card-section>
-            <div class="text-h6">Movimientos por Tipo</div>
-            <div id="movementsPieChart" style="height: 300px"></div>
+            <div class="text-h6 text-wine q-mb-md">
+              Evolución Mensual de Movimientos
+            </div>
+            <div id="monthlyChart" style="height: 350px"></div>
           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Movimientos por Mes -->
-      <div class="col-12 col-md-6">
-        <q-card class="my-card">
+      <div class="col-12 col-lg-4">
+        <q-card flat bordered class="chart-card">
           <q-card-section>
-            <div class="text-h6">Movimientos por Mes</div>
-            <div id="monthlyChart" style="height: 300px"></div>
+            <div class="text-h6 text-wine q-mb-md">
+              Distribución por Tipo
+            </div>
+            <div id="movementsPieChart" style="height: 350px"></div>
           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Valor Total del Inventario -->
+      <!-- Gráficos secundarios -->
       <div class="col-12 col-md-6">
-        <q-card class="my-card">
+        <q-card flat bordered class="chart-card">
           <q-card-section>
-            <div class="text-h6">Valor del Inventario por Categoría</div>
+            <div class="text-h6 text-wine q-mb-md">
+              Valor por Categoría
+            </div>
             <div id="inventoryValueChart" style="height: 300px"></div>
           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Top Proveedores -->
       <div class="col-12 col-md-6">
-        <q-card class="my-card">
+        <q-card flat bordered class="chart-card">
           <q-card-section>
-            <div class="text-h6">Top 5 Proveedores</div>
+            <div class="text-h6 text-wine q-mb-md">
+              Top 5 Proveedores
+            </div>
             <div id="suppliersChart" style="height: 300px"></div>
           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Productos con Bajo Stock -->
+      <!-- Gráfico de razones de movimientos -->
       <div class="col-12">
-        <q-card class="my-card">
+        <q-card flat bordered class="chart-card">
           <q-card-section>
-            <div class="text-h6">Productos con Bajo Stock</div>
+            <div class="text-h6 text-wine q-mb-md">
+              Movimientos por Razón
+            </div>
+            <div id="reasonChart" style="height: 300px"></div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- Tabla de productos con bajo stock -->
+      <div class="col-12">
+        <q-card flat bordered class="table-card">
+          <q-card-section>
+            <div class="text-h6 text-wine q-mb-md">
+              <q-icon name="warning" class="q-mr-sm text-amber-8" />
+              Productos con Bajo Stock
+            </div>
             <q-table
               :rows="lowStockProducts"
               :columns="lowStockColumns"
               row-key="id"
+              flat
               dense
-              :pagination="{ rowsPerPage: 5 }"
+              :pagination="{ rowsPerPage: 10, sortBy: 'stock' }"
+              class="low-stock-table"
             />
           </q-card-section>
         </q-card>
@@ -95,29 +186,110 @@ export default defineComponent({
       suppliersData: null,
       lowStockProducts: [],
       lowStockColumns: [
-        { name: 'code', field: 'code', label: 'Código', align: 'left' },
+        {
+          name: 'code',
+          field: 'code',
+          label: 'Código',
+          align: 'left',
+          style: 'font-weight: 500;'
+        },
         { name: 'name', field: 'name', label: 'Nombre', align: 'left' },
-        { name: 'stock', field: 'stock', label: 'Stock Actual', align: 'right' },
+        {
+          name: 'stock',
+          field: 'stock',
+          label: 'Stock Actual',
+          align: 'right',
+          style: 'color: #a13950; font-weight: 500;'
+        },
         { name: 'category', field: 'category', label: 'Categoría', align: 'left' },
         {
           name: 'value',
           field: 'value',
           label: 'Valor',
           align: 'right',
-          format: val => new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(val)
+          format: val => this.formatCurrency(val)
         }
       ]
     }
   },
 
+  computed: {
+    totalMovements() {
+      if (!this.movementsData?.direction_summary) return 0
+      return this.movementsData.direction_summary.reduce((sum, item) => sum + item.total, 0)
+    },
+    totalValue() {
+      if (!this.movementsData?.direction_summary) return 0
+      return this.movementsData.direction_summary.reduce((sum, item) => sum + item.total_value, 0)
+    },
+    entriesCount() {
+      if (!this.movementsData?.direction_summary) return 0
+      const entry = this.movementsData.direction_summary.find(item => item.direction === 'IN')
+      return entry ? entry.total : 0
+    },
+    exitsCount() {
+      if (!this.movementsData?.direction_summary) return 0
+      const exit = this.movementsData.direction_summary.find(item => item.direction === 'OUT')
+      return exit ? exit.total : 0
+    }
+  },
+
   methods: {
+    formatCurrency(value) {
+      return new Intl.NumberFormat('es-PE', {
+        style: 'currency',
+        currency: 'PEN',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value || 0)
+    },
+
+    async downloadExcel() {
+      try {
+        this.$q.loading.show();
+        const response = await this.$store.dispatch('general/downloadExcelReport', {
+          startDate: this.filters.startDate,
+          endDate: this.filters.endDate
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `reporte_movimientos_${this.filters.startDate}_${this.filters.endDate}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        this.$q.notify({
+          type: 'positive',
+          message: 'Reporte Excel generado correctamente.',
+          icon: 'download'
+        });
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Error al generar el reporte Excel.',
+          icon: 'error'
+        });
+      } finally {
+        this.$q.loading.hide();
+      }
+    },
+
     async fetchAllData() {
-      await Promise.all([
-        this.fetchMovements(),
-        this.fetchInventory(),
-        this.fetchSuppliers()
-      ])
-      this.renderCharts()
+      this.$q.loading.show('Cargando datos...');
+      try {
+        await Promise.all([
+          this.fetchMovements(),
+          this.fetchInventory(),
+          this.fetchSuppliers()
+        ]);
+        this.renderCharts();
+      } finally {
+        this.$q.loading.hide();
+      }
     },
 
     async fetchMovements() {
@@ -130,7 +302,8 @@ export default defineComponent({
         console.error('Error fetching movements:', error)
         this.$q.notify({
           type: 'negative',
-          message: 'Error al cargar datos de movimientos'
+          message: 'Error al cargar datos de movimientos',
+          icon: 'error'
         })
       }
     },
@@ -144,7 +317,8 @@ export default defineComponent({
         console.error('Error fetching inventory:', error)
         this.$q.notify({
           type: 'negative',
-          message: 'Error al cargar datos de inventario'
+          message: 'Error al cargar datos de inventario',
+          icon: 'error'
         })
       }
     },
@@ -157,33 +331,41 @@ export default defineComponent({
         console.error('Error fetching suppliers:', error)
         this.$q.notify({
           type: 'negative',
-          message: 'Error al cargar datos de proveedores'
+          message: 'Error al cargar datos de proveedores',
+          icon: 'error'
         })
       }
     },
 
     renderCharts() {
-      if (this.movementsData) {
-        this.renderMovementsPieChart()
-        this.renderMonthlyChart()
-      }
-      if (this.inventoryData) {
-        this.renderInventoryValueChart()
-      }
-      if (this.suppliersData) {
-        this.renderSuppliersChart()
-      }
+      this.$nextTick(() => {
+        if (this.movementsData) {
+          this.renderMovementsPieChart()
+          this.renderMonthlyChart()
+          this.renderReasonChart()
+        }
+        if (this.inventoryData) {
+          this.renderInventoryValueChart()
+        }
+        if (this.suppliersData) {
+          this.renderSuppliersChart()
+        }
+      })
     },
 
     renderMovementsPieChart() {
       const data = this.movementsData.direction_summary.map(item => ({
-        name: item.direction === 'IN' ? 'Entrada' : 'Salida',
+        name: item.direction === 'IN' ? 'Entradas' : 'Salidas',
         y: item.total,
-        value: item.total_value
+        value: item.total_value,
+        color: item.direction === 'IN' ? '#712736' : '#a13950'
       }))
 
       Highcharts.chart('movementsPieChart', {
-        chart: { type: 'pie' },
+        chart: {
+          type: 'pie',
+          backgroundColor: 'transparent'
+        },
         title: { text: null },
         plotOptions: {
           pie: {
@@ -191,16 +373,23 @@ export default defineComponent({
             cursor: 'pointer',
             dataLabels: {
               enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-            }
+              format: '<b>{point.name}</b><br>{point.percentage:.1f}%',
+              style: { fontSize: '12px', color: '#616161' }
+            },
+            showInLegend: true,
+            size: '80%'
           }
         },
         tooltip: {
-          pointFormat: '{series.name}: <b>{point.y}</b><br/>Valor: <b>S/ {point.value:,.2f}</b>'
+          pointFormat: 'Cantidad: <b>{point.y}</b><br/>Valor: <b>S/ {point.value:,.2f}</b>'
+        },
+        legend: {
+          align: 'center',
+          verticalAlign: 'bottom',
+          itemStyle: { color: '#712736' }
         },
         series: [{
           name: 'Movimientos',
-          colorByPoint: true,
           data: data
         }]
       })
@@ -208,36 +397,114 @@ export default defineComponent({
 
     renderMonthlyChart() {
       const categories = []
-      const totals = []
-      const values = []
+      const entradas = []
+      const salidas = []
+      const valores = []
 
       this.movementsData.monthly_summary.forEach(item => {
         categories.push(date.formatDate(item.month, 'MMM YYYY'))
-        totals.push(item.total)
-        values.push(item.total_value)
+        entradas.push(item.total)
+        salidas.push(0)
+        valores.push(item.total_value)
       })
 
       Highcharts.chart('monthlyChart', {
-        chart: { type: 'column' },
+        chart: {
+          type: 'column',
+          backgroundColor: 'transparent'
+        },
         title: { text: null },
-        xAxis: { categories },
+        xAxis: {
+          categories,
+          labels: { style: { fontSize: '11px', color: '#712736' } }
+        },
         yAxis: [{
-          title: { text: 'Cantidad' }
+          title: { text: 'Cantidad', style: { color: '#712736' } },
+          labels: { style: { color: '#712736' } }
         }, {
-          title: { text: 'Valor (S/)' },
+          title: { text: 'Valor (S/)', style: { color: '#712736' } },
+          labels: {
+            style: { color: '#712736' },
+            formatter: function() {
+              return 'S/ ' + Highcharts.numberFormat(this.value, 0);
+            }
+          },
           opposite: true
         }],
+        tooltip: {
+          shared: true,
+          formatter: function() {
+            let tooltip = '<b>' + this.x + '</b><br/>';
+            this.points.forEach(point => {
+              if (point.series.name === 'Valor') {
+                tooltip += point.series.name + ': <b>S/ ' + Highcharts.numberFormat(point.y, 2) + '</b><br/>';
+              } else {
+                tooltip += point.series.name + ': <b>' + point.y + '</b><br/>';
+              }
+            });
+            return tooltip;
+          }
+        },
         series: [{
-          name: 'Cantidad',
-          data: totals
+          name: 'Movimientos',
+          data: entradas,
+          color: '#712736'
         }, {
           name: 'Valor',
-          data: values,
+          data: valores,
           yAxis: 1,
-          tooltip: {
-            valuePrefix: 'S/ ',
-            valueDecimals: 2
+          type: 'spline',
+          color: '#a13950',
+          marker: { enabled: true, radius: 4 }
+        }],
+        legend: {
+          align: 'center',
+          verticalAlign: 'top',
+          itemStyle: { color: '#712736' }
+        }
+      })
+    },
+
+    renderReasonChart() {
+      if (!this.movementsData?.reason_summary) return;
+
+      const data = this.movementsData.reason_summary.map((item, index) => ({
+        name: item.reason_type__name,
+        y: item.total,
+        value: item.total_value,
+        color: `hsl(285, ${30 + index * 10}%, ${35 + index * 5}%)` // Actualizado para usar una paleta armónica basada en #712736
+      }))
+
+      Highcharts.chart('reasonChart', {
+        chart: {
+          type: 'bar',
+          backgroundColor: 'transparent'
+        },
+        title: { text: null },
+        xAxis: {
+          type: 'category',
+          labels: { style: { fontSize: '12px', color: '#616161' } }
+        },
+        yAxis: {
+          title: { text: 'Cantidad de Movimientos', style: { color: '#616161' } },
+          labels: { style: { color: '#616161' } }
+        },
+        legend: { enabled: false },
+        plotOptions: {
+          bar: {
+            dataLabels: {
+              enabled: true,
+              format: '{point.y}',
+              style: { color: '#616161', fontSize: '11px' }
+            }
           }
+        },
+        tooltip: {
+          pointFormat: 'Movimientos: <b>{point.y}</b><br/>Valor: <b>S/ {point.value:,.2f}</b>'
+        },
+        series: [{
+          name: 'Razón',
+          data: data
         }]
       })
     },
@@ -253,15 +520,21 @@ export default defineComponent({
         categories[product.category] += product.value
       })
 
+      let index = 0
       for (const [category, value] of Object.entries(categories)) {
         data.push({
           name: category,
-          y: value
+          y: value,
+          color: `hsl(345, ${30 + index * 10}%, ${35 + index * 5}%)`
         })
+        index++
       }
 
       Highcharts.chart('inventoryValueChart', {
-        chart: { type: 'pie' },
+        chart: {
+          type: 'pie',
+          backgroundColor: 'transparent'
+        },
         title: { text: null },
         plotOptions: {
           pie: {
@@ -269,13 +542,24 @@ export default defineComponent({
             cursor: 'pointer',
             dataLabels: {
               enabled: true,
-              format: '<b>{point.name}</b>: S/ {point.y:,.2f}'
-            }
+              format: '<b>{point.name}</b><br>S/ {point.y:,.0f}',
+              style: { fontSize: '11px', color: '#712736' }
+            },
+            showInLegend: true,
+            size: '75%'
           }
         },
+        tooltip: {
+          pointFormat: 'Valor: <b>S/ {point.y:,.2f}</b><br/>Porcentaje: <b>{point.percentage:.1f}%</b>'
+        },
+        legend: {
+          align: 'center',
+          verticalAlign: 'bottom',
+          layout: 'horizontal',
+          itemStyle: { color: '#712736' }
+        },
         series: [{
-          name: 'Valor',
-          colorByPoint: true,
+          name: 'Categoría',
           data: data
         }]
       })
@@ -284,32 +568,49 @@ export default defineComponent({
     renderSuppliersChart() {
       const data = this.suppliersData.suppliers
         .slice(0, 5)
-        .map(supplier => ({
+        .map((supplier, index) => ({
           name: supplier.name,
-          y: supplier.total_value
+          y: supplier.total_value,
+          color: `hsl(345, ${30 + index * 10}%, ${35 + index * 5}%)`
         }))
 
       Highcharts.chart('suppliersChart', {
-        chart: { type: 'column' },
+        chart: {
+          type: 'column',
+          backgroundColor: 'transparent'
+        },
         title: { text: null },
         xAxis: {
-          type: 'category'
+          type: 'category',
+          labels: {
+            style: { fontSize: '11px', color: '#616161' },
+            rotation: -45
+          }
         },
         yAxis: {
-          title: { text: 'Valor Total (S/)' }
+          title: { text: 'Valor Total (S/)', style: { color: '#616161' } },
+          labels: {
+            style: { color: '#616161' },
+            formatter: function() {
+              return 'S/ ' + Highcharts.numberFormat(this.value, 0);
+            }
+          }
         },
         legend: { enabled: false },
         plotOptions: {
           column: {
             dataLabels: {
               enabled: true,
-              format: 'S/ {point.y:,.2f}'
+              format: 'S/ {point.y:,.0f}',
+              style: { fontSize: '10px', color: '#712736' }
             }
           }
         },
+        tooltip: {
+          pointFormat: 'Valor total: <b>S/ {point.y:,.2f}</b>'
+        },
         series: [{
-          name: 'Valor',
-          colorByPoint: true,
+          name: 'Proveedor',
           data: data
         }]
       })
@@ -323,8 +624,76 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.my-card {
-  width: 100%;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+.filter-card {
+  background: #f9f2f4;
+  border: 1px solid #e0d0d4;
+}
+
+.metric-card {
+  background: white;
+  border: 1px solid #e0d0d4;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card {
+  background: white;
+  border: 1px solid #e0d0d4;
+  transition: all 0.2s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-card {
+  background: white;
+  border: 1px solid #e0d0d4;
+}
+
+.low-stock-table {
+  border-radius: 0;
+}
+
+.filter-input {
+  min-width: 150px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filter-input {
+    min-width: 120px;
+  }
+}
+
+/* Dark mode support */
+.body--dark .filter-card {
+  background: #2c1418;
+  border-color: #3d1c22;
+}
+
+.body--dark .metric-card,
+.body--dark .chart-card,
+.body--dark .table-card {
+  background: #1e1414;
+  border-color: #3d1c22;
+}
+
+.body--dark .metric-card:hover,
+.body--dark .chart-card:hover {
+  box-shadow: 0 2px 8px rgba(113, 39, 54, 0.2);
+}
+
+/* Clases de color personalizadas */
+.text-wine {
+  color: #712736 !important;
+}
+
+.text-wine-light {
+  color: #a13950 !important;
 }
 </style>

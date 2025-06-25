@@ -1,6 +1,17 @@
 import { api } from "src/boot/axios";
 import { routes } from "src/boot/settings";
 
+export function downloadExcelReport({ }, filters = {}) {
+  // Construir query params
+  const params = new URLSearchParams();
+  if (filters.startDate) params.append('start_date', filters.startDate);
+  if (filters.endDate) params.append('end_date', filters.endDate);
+  return api.get('api/reports/excel/', {
+    params,
+    responseType: 'blob'
+  });
+}
+
 export function someAction(/* context */) {}
 
 export function getProducts({ dispatch, commit }, payload) {
